@@ -4,18 +4,24 @@ import os
 
 
 def error(code: int, message: str, do_exit: bool = False):
-    result = {"error": code, "message": message}
+    """ Prints error object to stdout as JSON and optionally exits the program """
+    result = {"error": {"code": code, "message": message}}
     print(json.dumps(result))
     if do_exit:
         exit(1)
 
 
+# try to import numpy
+try:
+    import numpy as np
+except ImportError:
+    error(1000, "Numpy is not installed. Please install it by running \"pip install numpy\"", True)
+
 # try to import hatchet
 try:
     import hatchet as ht
-    import numpy as np
 except ImportError:
-    error(1000, "Hatchet is not installed. Please install it by running \"pip install hatchet\"", True)
+    error(1001, "Hatchet is not installed. Please install it by running \"pip install hatchet\"", True)
 
 
 # allow numpy arrays to be serialized to json
@@ -45,7 +51,7 @@ def get_tree(gf: ht.GraphFrame) -> dict:
     return gf.to_literal(cat_columns=["file", "line", "type"])
 
 
-def get_hot_path(gf: ht.GraphFrame) -> list:
+def get_hot_path(gf: ht.GraphFrame, **kwargs) -> list:
     # find the root with name 'main' or '<program root>'
     root = gf.graph.roots[0]
     for r in gf.graph.roots:
@@ -53,7 +59,7 @@ def get_hot_path(gf: ht.GraphFrame) -> list:
             root = r
             break
 
-    return gf.hot_path(root)
+    return gf.hot_path(root, **kwargs)
 
 
 def label_hot_path(tree: dict, hot_path: list) -> dict:
@@ -69,39 +75,52 @@ def label_hot_path(tree: dict, hot_path: list) -> dict:
     
     return tree
 
+def identify_time_metric(gf: ht.GraphFrame) -> str:
+    potential_time_columns = ["time (inc)", "time (exc)", "REALTIME (sec) (I)", "REALTIME (sec) (E)"]
+    for col in potential_time_columns:
+        if col in gf.dataframe.columns:
+            return col
+    raise ValueError("Could not identify a time metric in the profile")
+
 
 def main():
     parser = ArgumentParser()
     parser.add_argument('--profile', type=str, required=True, help='Path to the profile file')
     parser.add_argument('--type', type=str, choices=['hpctoolkit', 'caliper', 'tau'], default='hpctoolkit', help='Type of the profile file')
     parser.add_argument('--hot-path', action='store_true', help='Whether to include the hot path in the output')
+    parser.add_argument('--metric', type=str, default='time', help='Metric to use for the hot path')
     args = parser.parse_args()
 
     # check that path exists
     if not os.path.exists(args.profile):
-        error(1001, "Profile path does not exist", True)
+        error(1002, "Profile path does not exist", True)
 
     # read the profile
     try:
         gf = read_profile(args.profile, args.type)
     except ValueError as e:
-        error(1002, str(e), True)
+        error(1003, str(e), True)
     except Exception as e:
-        error(1003, "Unknown error reading in profile.", True)
+        error(1004, "Unknown error reading in profile.", True)
 
     # collapse across ranks
     gf.drop_index_levels()
+
+    # identify the metric
+    METRIC_COLUMN = args.metric
+    if args.metric == "time":
+        metric = identify_time_metric(gf)
 
     # parse out tree from profile
     try:
         tree = get_tree(gf)
     except Exception as e:
-        error(1004, "Unknown error parsing out tree from profile.", True)
+        error(1005, "Unknown error parsing out tree from profile.", True)
 
     # get the hot path
     if args.hot_path:
         try:
-            hot_path = get_hot_path(gf)
+            hot_path = get_hot_path(gf, metric=METRIC_COLUMN)
         except Exception as e:
             hot_path = []
 
