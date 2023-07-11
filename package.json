@@ -45,7 +45,97 @@
           "name": "Profile Viewer"
         }
       ]
-    }
+    },
+    "colors": [
+      {
+        "id": "profileViewer.speed0",
+        "description": "The color used to highlight functions.",
+        "defaults": {
+          "light": "#ff0000",
+          "dark": "#ff0000"
+        }
+      },
+      {
+        "id": "profileViewer.speed1",
+        "description": "The color used to highlight functions.",
+        "defaults": {
+          "light": "#ff3300",
+          "dark": "#ff3300"
+        }
+      },
+      {
+        "id": "profileViewer.speed2",
+        "description": "The color used to highlight functions.",
+        "defaults": {
+          "light": "#ff6600",
+          "dark": "#ff6600"
+        }
+      },
+      {
+        "id": "profileViewer.speed3",
+        "description": "The color used to highlight functions.",
+        "defaults": {
+          "light": "#ff9900",
+          "dark": "#ff9900"
+        }
+      },
+      {
+        "id": "profileViewer.speed4",
+        "description": "The color used to highlight functions.",
+        "defaults": {
+          "light": "#ffcc00",
+          "dark": "#ffcc00"
+        }
+      },
+      {
+        "id": "profileViewer.speed5",
+        "description": "The color used to highlight functions.",
+        "defaults": {
+          "light": "#ffff00",
+          "dark": "#ffff00"
+        }
+      },
+      {
+        "id": "profileViewer.speed6",
+        "description": "The color used to highlight functions.",
+        "defaults": {
+          "light": "#ccff00",
+          "dark": "#ccff00"
+        }
+      },
+      {
+        "id": "profileViewer.speed7",
+        "description": "The color used to highlight functions.",
+        "defaults": {
+          "light": "#99ff00",
+          "dark": "#99ff00"
+        }
+      },
+      {
+        "id": "profileViewer.speed8",
+        "description": "The color used to highlight functions.",
+        "defaults": {
+          "light": "#66ff00",
+          "dark": "#66ff00"
+        }
+      },
+      {
+        "id": "profileViewer.speed9",
+        "description": "The color used to highlight functions.",
+        "defaults": {
+          "light": "#33ff00",
+          "dark": "#33ff00"
+        }
+      },
+      {
+        "id": "profileViewer.speed10",
+        "description": "The color used to highlight functions.",
+        "defaults": {
+          "light": "#00ff00",
+          "dark": "#00ff00"
+        }
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

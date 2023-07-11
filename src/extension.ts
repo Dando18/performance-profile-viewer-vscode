@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { execFile } from 'child_process';
-import ProfileDataProvider from './tree';
+import { ProfileDataProvider, ProfileColorProvider } from './tree';
 
 
 function viewProfile(source: string, expectsDir: boolean, treeData: ProfileDataProvider): void  {
@@ -37,10 +37,12 @@ function viewProfile(source: string, expectsDir: boolean, treeData: ProfileDataP
 
 export function activate(context: vscode.ExtensionContext) {
 
+	/* create decoration provider */
+	new ProfileColorProvider();
+
 	/* register tree view */
 	let profileDataProvider = new ProfileDataProvider();
 	vscode.window.registerTreeDataProvider('profileViewer', profileDataProvider);
-
 
 	/* register commands */
 	let hpctoolkitCommand = vscode.commands.registerCommand('profileviewer.viewHPCToolkitProfile', () => {
