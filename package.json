@@ -33,6 +33,10 @@
         "title": "View PyInstrument Profile",
         "category": "Profile"
       },
+      {
+        "command": "profileviewer.viewNodeSource",
+        "title": "View Source Code of Profile Node",
+        "icon": "$(file-code)"
       }
     ],
     "viewsContainers": {
@@ -40,7 +44,7 @@
         {
           "id": "profile-panel",
           "title": "Profile Panel",
-          "icon": "media/profile.svg"
+          "icon": "watch"
         }
       ]
     },
@@ -49,6 +53,21 @@
         {
           "id": "profileViewer",
           "name": "Profile Viewer"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "profileViewer",
+        "contents": "No profile loaded.\n[Load Profile](command:profileviewer.viewPyInstrumentProfile)"
+      }
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "profileviewer.viewNodeSource",
+          "when": "view == profileViewer",
+          "group": "inline"
         }
       ]
     },
