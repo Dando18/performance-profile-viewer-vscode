@@ -59,6 +59,11 @@ export function activate(context: vscode.ExtensionContext) {
 		viewProfile("tau", false, profileDataProvider);
 	});
 	context.subscriptions.push(tauCommand);
+
+	let pyinstrumentCommand = vscode.commands.registerCommand('profileviewer.viewPyInstrumentProfile', () => {
+		viewProfile("pyinstrument", false, profileDataProvider);
+	});
+	context.subscriptions.push(pyinstrumentCommand);
 }
 
 export function deactivate() {}

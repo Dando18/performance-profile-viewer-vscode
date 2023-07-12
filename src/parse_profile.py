@@ -43,6 +43,8 @@ def read_profile(fpath: os.PathLike, ptype: str):
         return ht.GraphFrame.from_caliper(fpath)
     elif ptype == 'tau':
         return ht.GraphFrame.from_tau(fpath)
+    elif ptype == 'pyinstrument':
+        return ht.GraphFrame.from_pyinstrument(fpath)
     else:
         raise ValueError(f"Unknown profile type: {ptype}")
 
@@ -76,7 +78,7 @@ def label_hot_path(tree: dict, hot_path: list) -> dict:
     return tree
 
 def identify_time_metric(gf: ht.GraphFrame) -> str:
-    potential_time_columns = ["time (inc)", "time (exc)", "REALTIME (sec) (I)", "REALTIME (sec) (E)"]
+    potential_time_columns = ["time", "time (inc)", "time (exc)", "REALTIME (sec) (I)", "REALTIME (sec) (E)"]
     for col in potential_time_columns:
         if col in gf.dataframe.columns:
             return col
@@ -86,7 +88,7 @@ def identify_time_metric(gf: ht.GraphFrame) -> str:
 def main():
     parser = ArgumentParser()
     parser.add_argument('--profile', type=str, required=True, help='Path to the profile file')
-    parser.add_argument('--type', type=str, choices=['hpctoolkit', 'caliper', 'tau'], default='hpctoolkit', help='Type of the profile file')
+    parser.add_argument('--type', type=str, choices=['hpctoolkit', 'caliper', 'tau', 'pyinstrument'], default='hpctoolkit', help='Type of the profile file')
     parser.add_argument('--hot-path', action='store_true', help='Whether to include the hot path in the output')
     parser.add_argument('--metric', type=str, default='time', help='Metric to use for the hot path')
     args = parser.parse_args()
@@ -130,7 +132,7 @@ def main():
         tree = label_hot_path(tree, hot_path)
     
     # print out the tree
-    print(json.dumps(tree, cls=NpEncoder))
+    print(json.dumps(tree, cls=NpEncoder, indent=2))
 
 
 

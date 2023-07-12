@@ -27,6 +27,12 @@
         "command": "profileviewer.viewTAUProfile",
         "title": "View TAU Profile",
         "category": "Profile"
+      },
+      {
+        "command": "profileviewer.viewPyInstrumentProfile",
+        "title": "View PyInstrument Profile",
+        "category": "Profile"
+      },
       }
     ],
     "viewsContainers": {
