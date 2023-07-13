@@ -2,8 +2,12 @@
 
 - [x] Create unified "Profile" pane on left
 - [ ] Properly handle different times column names
-- [ ] Open file from profile treeviewer -- add button to right of line
-- [ ] Add flamegraph view
+- [x] Open file from profile treeviewer -- add button to right of line
+- [x] Add "Select Profile Type" dropdown menu
+- [x] Add "Open New Profile" button to top of tree view
+- [ ] Put tree view in editor view
+- [ ] Add filter search bar above tree view
+- [x] Add flamegraph view
 - [ ] Add CG/CCT view
 - [ ] Add default Profile commands (similar to build/run commands)
 - [ ] Load Apex profile: add and test

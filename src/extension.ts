@@ -1,10 +1,12 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { execFile } from 'child_process';
+import { PROFILE_TYPES } from './profiletypes';
 import { ProfileDataProvider, ProfileColorProvider, ProfileTreeItem } from './tree';
+import { FlameGraphView } from './flamegraph';
 
 
-function viewProfile(source: string, expectsDir: boolean, treeData: ProfileDataProvider): void  {
+function selectPathAndOpen(source: string, expectsDir: boolean, treeData: ProfileDataProvider): void  {
 	/* prompt user to select path to profile */
 	vscode.window.showOpenDialog({
 		canSelectFiles: !expectsDir,
@@ -32,7 +34,18 @@ function viewProfile(source: string, expectsDir: boolean, treeData: ProfileDataP
 				});
 		}
 	});
-} 
+}
+
+
+function openProfile(treeData: ProfileDataProvider): void {
+	/* prompt for the type of profile to open */
+	vscode.window.showQuickPick(Object.keys(PROFILE_TYPES), {title: "Select Profile Type", placeHolder: "Open profile from..."})
+		.then((profileType: string | undefined) => {
+			if (profileType) {
+				selectPathAndOpen(profileType, PROFILE_TYPES[profileType as keyof typeof PROFILE_TYPES].isDirectory, treeData);
+			}
+		});
+}
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -48,25 +61,22 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand('profileviewer.viewNodeSource', async (node: ProfileTreeItem) => node.open());
 
 	/* register commands */
-	let hpctoolkitCommand = vscode.commands.registerCommand('profileviewer.viewHPCToolkitProfile', () => {
-		viewProfile("hpctoolkit", true, profileDataProvider);
-	});
-	context.subscriptions.push(hpctoolkitCommand);
+	for (const [profileType, profileInfo] of Object.entries(PROFILE_TYPES)) {
+		const commandName = `profileviewer.open${profileInfo.name}Profile`;
+		let command = vscode.commands.registerCommand(commandName, () => selectPathAndOpen(profileType, profileInfo.isDirectory, profileDataProvider));
+		context.subscriptions.push(command);
+	}
 
-	let caliperCommand = vscode.commands.registerCommand('profileviewer.viewCaliperProfile', () => {
-		viewProfile("caliper", false, profileDataProvider);
-	});
-	context.subscriptions.push(caliperCommand);
+	let openProfileCommand = vscode.commands.registerCommand('profileviewer.openProfile', () => openProfile(profileDataProvider));
+	context.subscriptions.push(openProfileCommand);
 
-	let tauCommand = vscode.commands.registerCommand('profileviewer.viewTauProfile', () => {
-		viewProfile("tau", false, profileDataProvider);
+	/* flame graph commands */
+	let flameGraphView = new FlameGraphView();
+	let flameGraphCommand = vscode.commands.registerCommand('profileviewer.openFlameGraph', () => {
+		flameGraphView.show(context, profileDataProvider.profileData);
 	});
-	context.subscriptions.push(tauCommand);
+	context.subscriptions.push(flameGraphCommand);
 
-	let pyinstrumentCommand = vscode.commands.registerCommand('profileviewer.viewPyInstrumentProfile', () => {
-		viewProfile("pyinstrument", false, profileDataProvider);
-	});
-	context.subscriptions.push(pyinstrumentCommand);
 }
 
 export function deactivate() {}

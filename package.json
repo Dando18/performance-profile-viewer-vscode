@@ -14,29 +14,41 @@
   "contributes": {
     "commands": [
       {
-        "command": "profileviewer.viewHPCToolkitProfile",
-        "title": "View HPCToolkit Profile",
+        "command": "profileviewer.openHPCToolkitProfile",
+        "title": "Open HPCToolkit Profile",
         "category": "Profile"
       },
       {
-        "command": "profileviewer.viewCaliperProfile",
-        "title": "View Caliper Profile",
+        "command": "profileviewer.openCaliperProfile",
+        "title": "Open Caliper Profile",
         "category": "Profile"
       },
       {
-        "command": "profileviewer.viewTAUProfile",
-        "title": "View TAU Profile",
+        "command": "profileviewer.openTAUProfile",
+        "title": "Open TAU Profile",
         "category": "Profile"
       },
       {
-        "command": "profileviewer.viewPyInstrumentProfile",
-        "title": "View PyInstrument Profile",
+        "command": "profileviewer.openPyInstrumentProfile",
+        "title": "Open PyInstrument Profile",
         "category": "Profile"
       },
       {
         "command": "profileviewer.viewNodeSource",
         "title": "View Source Code of Profile Node",
         "icon": "$(file-code)"
+      },
+      {
+        "command": "profileviewer.openProfile",
+        "title": "Open Profile",
+        "category": "Profile",
+        "icon": "$(add)"
+      },
+      {
+        "command": "profileviewer.openFlameGraph",
+        "title": "Open Flame Graph",
+        "category": "Profile",
+        "icon": "$(graph)"
       }
     ],
     "viewsContainers": {
@@ -44,7 +56,7 @@
         {
           "id": "profile-panel",
           "title": "Profile Panel",
-          "icon": "watch"
+          "icon": "$(watch)"
         }
       ]
     },
@@ -59,10 +71,22 @@
     "viewsWelcome": [
       {
         "view": "profileViewer",
-        "contents": "No profile loaded.\n[Load Profile](command:profileviewer.viewPyInstrumentProfile)"
+        "contents": "No profile loaded.\n[Load Profile](command:profileviewer.openProfile)"
       }
     ],
     "menus": {
+      "view/title": [
+        {
+          "command": "profileviewer.openProfile",
+          "when": "view == profileViewer",
+          "group": "navigation"
+        },
+        {
+          "command": "profileviewer.openFlameGraph",
+          "when": "view == profileViewer",
+          "group": "navigation"
+        }
+      ],
       "view/item/context": [
         {
           "command": "profileviewer.viewNodeSource",

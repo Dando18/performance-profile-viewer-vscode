@@ -74,7 +74,7 @@ export class ProfileDataProvider implements vscode.TreeDataProvider<ProfileTreeI
     private _onDidChangeTreeData: vscode.EventEmitter<ProfileTreeItem | undefined> = new vscode.EventEmitter<ProfileTreeItem | undefined>();
     readonly onDidChangeTreeData: vscode.Event<ProfileTreeItem | undefined> = this._onDidChangeTreeData.event;
 
-    private profileData: any;
+    public profileData: any;
     private maxTime: number = 0;
 
     setProfileData(data: any) {
