@@ -7,7 +7,7 @@
     "vscode": "^1.79.0"
   },
   "categories": [
-    "Other"
+    "Profile"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
@@ -34,11 +34,6 @@
         "category": "Profile"
       },
       {
-        "command": "profileviewer.viewNodeSource",
-        "title": "View Source Code of Profile Node",
-        "icon": "$(file-code)"
-      },
-      {
         "command": "profileviewer.openProfile",
         "title": "Open Profile",
         "category": "Profile",
@@ -51,138 +46,16 @@
         "icon": "$(graph)"
       }
     ],
-    "viewsContainers": {
-      "panel": [
-        {
-          "id": "profile-panel",
-          "title": "Profile Panel",
-          "icon": "$(watch)"
-        }
-      ]
-    },
-    "views": {
-      "profile-panel": [
-        {
-          "id": "profileViewer",
-          "name": "Profile Viewer"
-        }
-      ]
-    },
-    "viewsWelcome": [
+    "customEditors": [
       {
-        "view": "profileViewer",
-        "contents": "No profile loaded.\n[Load Profile](command:profileviewer.openProfile)"
-      }
-    ],
-    "menus": {
-      "view/title": [
-        {
-          "command": "profileviewer.openProfile",
-          "when": "view == profileViewer",
-          "group": "navigation"
-        },
-        {
-          "command": "profileviewer.openFlameGraph",
-          "when": "view == profileViewer",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "profileviewer.viewNodeSource",
-          "when": "view == profileViewer",
-          "group": "inline"
-        }
-      ]
-    },
-    "colors": [
-      {
-        "id": "profileViewer.speed0",
-        "description": "The color used to highlight functions.",
-        "defaults": {
-          "light": "#ff0000",
-          "dark": "#ff0000"
-        }
-      },
-      {
-        "id": "profileViewer.speed1",
-        "description": "The color used to highlight functions.",
-        "defaults": {
-          "light": "#ff3300",
-          "dark": "#ff3300"
-        }
-      },
-      {
-        "id": "profileViewer.speed2",
-        "description": "The color used to highlight functions.",
-        "defaults": {
-          "light": "#ff6600",
-          "dark": "#ff6600"
-        }
-      },
-      {
-        "id": "profileViewer.speed3",
-        "description": "The color used to highlight functions.",
-        "defaults": {
-          "light": "#ff9900",
-          "dark": "#ff9900"
-        }
-      },
-      {
-        "id": "profileViewer.speed4",
-        "description": "The color used to highlight functions.",
-        "defaults": {
-          "light": "#ffcc00",
-          "dark": "#ffcc00"
-        }
-      },
-      {
-        "id": "profileViewer.speed5",
-        "description": "The color used to highlight functions.",
-        "defaults": {
-          "light": "#ffff00",
-          "dark": "#ffff00"
-        }
-      },
-      {
-        "id": "profileViewer.speed6",
-        "description": "The color used to highlight functions.",
-        "defaults": {
-          "light": "#ccff00",
-          "dark": "#ccff00"
-        }
-      },
-      {
-        "id": "profileViewer.speed7",
-        "description": "The color used to highlight functions.",
-        "defaults": {
-          "light": "#99ff00",
-          "dark": "#99ff00"
-        }
-      },
-      {
-        "id": "profileViewer.speed8",
-        "description": "The color used to highlight functions.",
-        "defaults": {
-          "light": "#66ff00",
-          "dark": "#66ff00"
-        }
-      },
-      {
-        "id": "profileViewer.speed9",
-        "description": "The color used to highlight functions.",
-        "defaults": {
-          "light": "#33ff00",
-          "dark": "#33ff00"
-        }
-      },
-      {
-        "id": "profileViewer.speed10",
-        "description": "The color used to highlight functions.",
-        "defaults": {
-          "light": "#00ff00",
-          "dark": "#00ff00"
-        }
+        "viewType": "profileviewer.profileTreeEditor",
+        "displayName": "Profile Tree",
+        "selector": [
+          {
+            "scheme": "profile-tree",
+            "filenamePattern": "*"
+          }
+        ]
       }
     ]
   },

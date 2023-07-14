@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Tree</title>
+    <style>
+        .tree {
+            --spacing : 1.0rem;
+            --radius  : 10px;
+            padding-inline-start: 0px;
+        }
+
+        .tree li {
+            display      : block;
+            position     : relative;
+            padding-left : calc(2 * var(--spacing) - var(--radius) - 2px);
+        }
+
+        .tree details, .tree .tree__root {
+            margin-top: 3px;
+        }
+
+        .tree summary:hover, .tree .tree__root:hover {
+            background-color: var(--vscode-button-secondaryHoverBackground);
+        }
+
+        .tree ul {
+            margin-left  : calc(var(--radius) - var(--spacing));
+            padding-left : 0;
+        }
+
+        .tree__filepath {
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="search" placeholder="Search" onkeyup="search()">
+    <div>{{ data }}</div>
+
+    <script>
+        var vscode = acquireVsCodeApi();
+        function openFile(file, line) {
+            vscode.postMessage({
+                command: 'open',
+                path: file,
+                line: line
+            });
+        }
+    </script>
+</body>
+</html>
