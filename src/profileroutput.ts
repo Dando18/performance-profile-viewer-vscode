@@ -2,6 +2,9 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { spawn, ChildProcess } from 'child_process';
 
+/**
+ * Types of supported profiler outputs and their properties.
+ */
 export const PROFILER_OUTPUT_TYPES = {
     hpctoolkit: {
         name: "HPCToolkit",
@@ -21,12 +24,17 @@ export const PROFILER_OUTPUT_TYPES = {
     }
 };
 
+/**
+ * A node in the profiler output tree. Wraps the JSON output of the hatchet
+ * parser script.
+ */
 export class ProfilerOutputNode {
     public readonly name: string;
     public readonly frame: any;
     public readonly metrics: any;
     public readonly attributes: any;
     public readonly children: ProfilerOutputNode[];
+    public value: number | undefined;
 
     constructor(name: string, frame: any, metrics: any, attributes: any, children: ProfilerOutputNode[]) {
         this.name = name;
@@ -85,17 +93,37 @@ export class ProfilerOutputNode {
         return this.attributes.line;
     }
 
+    public setValueMetric(metricColumn: string, recursive: boolean = true) {
+        this.value = this.metrics[metricColumn as keyof typeof this.metrics];
+        if (recursive) {
+            for (const child of this.children) {
+                child.setValueMetric(metricColumn, recursive);
+            }
+        }
+    }
+
     public toString(): string {
         return JSON.stringify(this);
     }
 };
 
-
+/**
+ * The profile output tree. Wraps a list of root nodes.
+ */
 export class ProfilerOutputTree {
     public readonly roots: ProfilerOutputNode[];
 
     constructor(roots: ProfilerOutputNode[]) {
         this.roots = roots;
+    }
+
+    public getTreeWithSingleRoot(): ProfilerOutputNode {
+        if (this.roots.length === 1) {
+            return this.roots[0];
+        } else {
+            const rootIncTime = this.getMaxInclusiveTime();
+            return new ProfilerOutputNode("root", {name: "root", type: "root"}, {time: 0, "time (inc)": rootIncTime}, {}, this.roots);
+        }
     }
 
     public static fromObject(obj: any): ProfilerOutputTree {
@@ -114,6 +142,10 @@ export class ProfilerOutputTree {
     public getMaxInclusiveTime(): number {
         /* no need to recursively check, since max inclusive runtime should be at one of the roots */
         return Math.max(...this.roots.map((root: ProfilerOutputNode) => root.getInclusiveTime() || 0));
+    }
+
+    public setValueMetric(metricColumn: string, recursive: boolean = true) {
+        this.roots.forEach((root: ProfilerOutputNode) => root.setValueMetric(metricColumn, recursive));
     }
 };
 

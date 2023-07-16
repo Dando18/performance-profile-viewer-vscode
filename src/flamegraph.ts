@@ -1,38 +1,61 @@
 import * as vscode from 'vscode';
+import { ProfilerOutput, ProfilerOutputTree, ProfilerOutputNode } from './profileroutput';
 
-export class FlameGraphView {
-    private webviewPanel: vscode.WebviewPanel | undefined = undefined;
 
-    constructor() {
+class ProfileFlameGraphDocument implements vscode.CustomDocument {
+    public uri: vscode.Uri;
+    public profilerOutput: ProfilerOutput;
 
+    constructor(uri: vscode.Uri) {
+        this.uri = uri;
+        this.profilerOutput = ProfilerOutput.fromUri(uri);
     }
 
-    show(context: vscode.ExtensionContext, profileData: any) {
-        const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
-        if (this.webviewPanel) {
-            this.webviewPanel.reveal(column);
-        } else {
-            this.webviewPanel = vscode.window.createWebviewPanel(
-                'flamegraph',
-                'FlameGraph Viewer',
-                column || vscode.ViewColumn.One,
-                {
-                    enableScripts: true,
-                    retainContextWhenHidden: true
-                }
-            );
-
-            const data = this.convertToD3FlamegraphFormat(profileData);
-            this.webviewPanel.webview.html = this.getHtmlForWebview(data);
-
-            this.webviewPanel.onDidDispose(() => {
-                this.webviewPanel = undefined;
-            }, null, context.subscriptions);
-        }
+    async getContents(): Promise<ProfilerOutputTree> {
+        return this.profilerOutput.getTree();
     }
 
-    private getHtmlForWebview(tree: Object) {
-        const treeString: string = JSON.stringify(tree);
+    dispose() {
+        this.profilerOutput.dispose();
+    }
+};
+
+export class FlameGraphView implements vscode.CustomReadonlyEditorProvider {
+    public static viewType = 'profileviewer.profileFlameGraphViewer';
+    private readonly context: vscode.ExtensionContext;
+
+    constructor(context: vscode.ExtensionContext) {
+        this.context = context;
+    }
+
+    async resolveCustomEditor(
+        document: ProfileFlameGraphDocument,
+        webviewPanel: vscode.WebviewPanel,
+        _token: vscode.CancellationToken
+    ): Promise<void> {
+        webviewPanel.title = 'FlameGraph Viewer';
+
+        webviewPanel.webview.options = {
+            enableScripts: true,
+            enableCommandUris: true,
+        };
+
+        webviewPanel.webview.onDidReceiveMessage(this.onDidReceiveMessage, undefined, this.context.subscriptions);
+        
+        const tree = await document.getContents();
+        tree.setValueMetric("time (inc)", true);
+        webviewPanel.webview.html = this.getHtmlForWebview(tree.getTreeWithSingleRoot());
+    }
+
+    openCustomDocument(uri: vscode.Uri): vscode.CustomDocument {
+        return new ProfileFlameGraphDocument(uri);
+    }
+
+    private onDidReceiveMessage(message: any) {
+    }
+
+    private getHtmlForWebview(tree: ProfilerOutputNode): string {
+        const treeString: string = tree.toString();
         return `
         <!DOCTYPE html>
         <html lang="en">
@@ -55,29 +78,5 @@ export class FlameGraphView {
             </script>
         </body>
         </html>`;
-    }
-
-    private addValueProperty(node: any) {
-        node.value = node.metrics["time (inc)"];
-        if (node.children) {
-            node.children.forEach((child: any) => this.addValueProperty(child));
-        }
-    }
-
-    private convertToD3FlamegraphFormat(profileData: any): Object {
-        /* handle case where there is only 1 root node */
-        let root = undefined;
-        if (profileData.length === 1) {
-            root = profileData[0];
-        } else {
-            /* there are more than 1 root nodes, so create a new root node */
-            root = {
-                name: "root",
-                value: 0,
-                children: profileData
-            };
-        }
-        this.addValueProperty(root);
-        return root;
     }
 };

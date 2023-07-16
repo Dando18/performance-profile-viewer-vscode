@@ -2,6 +2,11 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { ProfilerOutput, ProfilerOutputTree, ProfilerOutputNode } from './profileroutput';
 
+/**
+ * Custom document type for profile trees. Allows the tree to be opened
+ * inside a custom editor. Initialized with a URI and returns a 
+ * ProfilerOutputTree on getContents().
+ */
 class ProfileTreeDocument implements vscode.CustomDocument {
     public uri: vscode.Uri;
     public profilerOutput: ProfilerOutput;
@@ -20,6 +25,10 @@ class ProfileTreeDocument implements vscode.CustomDocument {
     }
 };
 
+/**
+ * Custom readonly editor window. Defines the webview panel for displaying tree
+ * data from ProfilerOutputTree objects. 
+ */
 export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
     public static viewType = 'profileviewer.profileTreeEditor';
 

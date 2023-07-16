@@ -50,9 +50,19 @@
       {
         "viewType": "profileviewer.profileTreeEditor",
         "displayName": "Profile Tree",
+        "priority": "option",
         "selector": [
           {
-            "scheme": "profile-tree",
+            "filenamePattern": "*"
+          }
+        ]
+      },
+      {
+        "viewType": "profileviewer.profileFlameGraphViewer",
+        "displayName": "Profile Flame Graph",
+        "priority": "option",
+        "selector": [
+          {
             "filenamePattern": "*"
           }
         ]
