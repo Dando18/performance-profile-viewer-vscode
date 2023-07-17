@@ -135,6 +135,18 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
             return `<span class="tree__filepath">${filenameHtml}</span>`;
         }
     }
+
+    private getHotPathIcon(node: ProfilerOutputNode, isFancy: boolean = true): string {
+        if (!node.isOnHotPath()) {
+            return '';
+        }
+        if (isFancy) {
+            /* todo -- add animated flame */
+            return '<i class="hotpath-icon codicon codicon-flame"></i>';
+        } else {
+            return '<i class="hotpath-icon codicon codicon-flame"></i>';
+        }
+    }
     
     private async getHtmlNestedLists(node: ProfilerOutputNode, maxRunTime: number, depth: number): Promise<string> {
         let resolvedFilename = await node.getResolvedFilename();
@@ -143,7 +155,7 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
         const nameElem = this.escapeHtml(node.name);
         const incTimeElem = this.getTimeHtmlElement(node.getInclusiveTime() || 0, maxRunTime);
         const filenameElem = this.getFilePathHtmlElement(node.getFilename() || "", resolvedFilename, line);
-        const hotPathElem = (node.isOnHotPath()) ? '<i class="hotpath-icon codicon codicon-flame"></i>' : '';
+        const hotPathElem = this.getHotPathIcon(node, true);
 
         /* each node is a list item */
         let htmlContent = "<li>";
