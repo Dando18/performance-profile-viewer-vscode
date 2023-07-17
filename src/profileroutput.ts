@@ -16,7 +16,7 @@ export const PROFILER_OUTPUT_TYPES = {
     },
     tau: {
         name: "TAU",
-        isDirectory: false
+        isDirectory: true
     },
     pyinstrument: {
         name: "PyInstrument",
@@ -28,7 +28,7 @@ export const PROFILER_OUTPUT_TYPES = {
     },
     spotdb: {
         name: "Spot",
-        isDirectory: false
+        isDirectory: true
     },
     gprof: {
         name: "GProf",
@@ -213,6 +213,13 @@ export class ProfilerOutput implements vscode.Disposable {
 					output += data.toString();
 				});
 			}
+
+            let stderr = '';
+            if (this.process.stderr) {
+                this.process.stderr.on('data', (data: Buffer) => {
+                    stderr += data.toString();
+                });
+            }
 	  
 			// Handle the completion of the Python script
 			this.process.on('close', (code: number) => {

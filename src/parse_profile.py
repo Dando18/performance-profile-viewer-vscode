@@ -109,7 +109,9 @@ def normalize_time_metric(gf: ht.GraphFrame) -> str:
 def main():
     parser = ArgumentParser()
     parser.add_argument('--profile', type=str, required=True, help='Path to the profile file')
-    parser.add_argument('--type', type=str, choices=['hpctoolkit', 'caliper', 'tau', 'pyinstrument'], default='hpctoolkit', help='Type of the profile file')
+    parser.add_argument('--type', type=str, 
+        choices=['hpctoolkit', 'caliper', 'tau', 'pyinstrument', 'scorep', 'spotdb', 'gprof', 'timememory', 'cprofile'], 
+        default='hpctoolkit', help='Type of the profile file')
     parser.add_argument('--hot-path', action='store_true', help='Whether to include the hot path in the output')
     parser.add_argument('--metric', type=str, default='time', help='Metric to use for the hot path')
     args = parser.parse_args()
