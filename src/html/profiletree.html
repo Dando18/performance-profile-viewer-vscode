@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Profile Tree</title>
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src {{ cspSource }}; style-src {{ cspSource }};"> -->
     <link href="{{ codiconsUri }}" rel="stylesheet" />
@@ -41,12 +42,28 @@
         }
 
         .hotpath-icon {
-            font-size: calv(var(--vscode-font-size) * 0.8) !important;
+            font-size: calc(var(--vscode-font-size) * 0.8) !important;
+        }
+
+        .text-input {
+            color: var(--vscode-input-foreground);
+            background-color: var(--vscode-input-background);
+            caret-color: var(--vscode-input-placeholderForeground);
+            border: 8px solid var(--vscode-input-border);
+            padding: 8px;
+        }
+
+        .btn {
+            color: var(--vscode-button-foreground);
+            background-color: var(--vscode-button-background);
+            border: 5px solid var(--vscode-button-border);
+            padding: 8px;
         }
     </style>
 </head>
 <body>
-    <input type="text" id="search" placeholder="Search" onkeyup="search()">
+    <input type="text" class="text-input" id="search" placeholder="Search" onkeyup="search()">
+    <input type="button" class="btn" id="open-btn" value="Open All" onclick="showAll()">
     <div>{{ data }}</div>
 
     <script>
@@ -87,6 +104,13 @@
                     summary.classList.remove("tree__search-result");
                     detail.removeAttribute("open");
                 }
+            }
+        }
+
+        function showAll() {
+            const details = document.getElementsByTagName('details');
+            for (let i = 0; i < details.length; i++) {
+                details[i].setAttribute("open", "");
             }
         }
     </script>

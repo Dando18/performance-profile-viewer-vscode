@@ -26,6 +26,14 @@ export class FlameGraphView implements vscode.CustomReadonlyEditorProvider {
 
     constructor(context: vscode.ExtensionContext) {
         this.context = context;
+
+        /* register as custom editor */
+        context.subscriptions.push(vscode.window.registerCustomEditorProvider(FlameGraphView.viewType, this, {
+            webviewOptions: {
+                retainContextWhenHidden: true,
+            },
+            supportsMultipleEditorsPerDocument: true,
+        }));
     }
 
     async resolveCustomEditor(

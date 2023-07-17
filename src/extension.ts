@@ -57,21 +57,11 @@ function getProfileUri(fpath: string | vscode.Uri, profileType: string, scheme: 
 
 export function activate(context: vscode.ExtensionContext) {
 
-	/* register tree editor */
-	let profileTreeEditor = new ProfileTreeEditor(context);
-	vscode.window.registerCustomEditorProvider(ProfileTreeEditor.viewType, profileTreeEditor, {
-			webviewOptions: {
-				retainContextWhenHidden: true,
-			}
-		});
+	/* create tree editor */
+	new ProfileTreeEditor(context);
 
 	/* flame graph editor */
-	let flameGraphView = new FlameGraphView(context);
-	vscode.window.registerCustomEditorProvider(FlameGraphView.viewType, flameGraphView, {
-			webviewOptions: {
-				retainContextWhenHidden: true,
-			}
-		});
+	new FlameGraphView(context);
 
 	/* register command to open profile */
 	let openProfileCommand = vscode.commands.registerCommand('profileviewer.openProfile', () => openProfile(["profileTree", "profileFlameGraph"]));

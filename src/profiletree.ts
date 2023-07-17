@@ -46,6 +46,14 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
         vscode.workspace.fs.readFile(htmlUri).then((value: Uint8Array) => {
             this.htmlTemplate = Buffer.from(value).toString();
         });
+
+        /* register as custom editor */
+        context.subscriptions.push(vscode.window.registerCustomEditorProvider(ProfileTreeEditor.viewType, this, {
+            webviewOptions: {
+                retainContextWhenHidden: true,
+            },
+            supportsMultipleEditorsPerDocument: true,
+        }));
     }
 
     async resolveCustomEditor(
