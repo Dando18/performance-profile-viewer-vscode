@@ -26,10 +26,6 @@ export const PROFILER_OUTPUT_TYPES = {
         name: "ScoreP",
         isDirectory: false
     },
-    spotdb: {
-        name: "Spot",
-        isDirectory: true
-    },
     gprof: {
         name: "GProf",
         isDirectory: false
