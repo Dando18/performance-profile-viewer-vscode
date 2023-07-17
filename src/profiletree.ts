@@ -67,7 +67,7 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
 
         // Set the webview's initial html content
         const tree: ProfilerOutputTree = await document.getContents();
-        webviewPanel.webview.html = await this.getHtmlForWebview(tree);
+        webviewPanel.webview.html = await this.getHtmlForWebview(tree, webviewPanel.webview);
     }
   
     openCustomDocument(_uri: vscode.Uri): vscode.CustomDocument {
@@ -132,6 +132,7 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
         const nameElem = this.escapeHtml(node.name);
         const incTimeElem = this.getTimeHtmlElement(node.getInclusiveTime() || 0, maxRunTime);
         const filenameElem = this.getFilePathHtmlElement(node.getFilename() || "", resolvedFilename, line);
+        const hotPathElem = (node.isOnHotPath()) ? '<i class="hotpath-icon codicon codicon-flame"></i>' : '';
 
         /* each node is a list item */
         let htmlContent = "<li>";
@@ -139,7 +140,7 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
         /* handle case where node has children */
         if (node.children && node.children.length > 0) {
             const detailsAttr = (depth < this.initialLevelsOpen) ? " open" : "";
-            htmlContent += `<details ${detailsAttr}><summary> (` + incTimeElem + " s) " + nameElem + " " + filenameElem + " </summary><ul>";
+            htmlContent += `<details ${detailsAttr}><summary> ${hotPathElem}(` + incTimeElem + " s) " + nameElem + " " + filenameElem + " </summary><ul>";
             /* sorted children by inclusive time */
             node.children.sort((a, b) => {
                 return (b.getInclusiveTime() || 0) - (a.getInclusiveTime() || 0);
@@ -159,10 +160,12 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
         return htmlContent;
     }
 
-    private async getHtmlForWebview(tree: ProfilerOutputTree): Promise<string> {
+    private async getHtmlForWebview(tree: ProfilerOutputTree, webview: vscode.Webview): Promise<string> {
         if (!this.htmlTemplate) {
             return '';
         }
+        const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css'));
+
         let maxRunTime = tree.getMaxInclusiveTime();
         let htmlLists = "";
         for (let root of tree.roots) {
@@ -171,6 +174,8 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
             htmlLists += "</ul>";
         }
         let htmlContent = this.htmlTemplate.replace("{{ data }}", htmlLists);
+        htmlContent = htmlContent.replace("{{ codiconsUri }}", codiconsUri.toString());
+        htmlContent = htmlContent.replace("{{ cspSource }}", webview.cspSource);
         return htmlContent;
     }
   }

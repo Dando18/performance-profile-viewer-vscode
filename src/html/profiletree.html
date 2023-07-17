@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Profile Tree</title>
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src {{ cspSource }}; style-src {{ cspSource }};"> -->
+    <link href="{{ codiconsUri }}" rel="stylesheet" />
+
     <style>
         .tree {
             --spacing : 1.0rem;
@@ -32,6 +35,14 @@
         .tree__filepath {
             color: #888;
         }
+
+        .tree__search-result {
+            background-color: var(--vscode-button-secondaryHoverBackground);
+        }
+
+        .hotpath-icon {
+            font-size: calv(var(--vscode-font-size) * 0.8) !important;
+        }
     </style>
 </head>
 <body>
@@ -46,6 +57,37 @@
                 path: file,
                 line: line
             });
+        }
+
+        function search() {
+            const search = document.getElementById('search').value.toLowerCase();
+
+            if (search === "") {
+                const details = document.getElementsByTagName('details');
+                for (let i = 0; i < details.length; i++) {
+                    details[i].removeAttribute("open");
+                }
+                return;
+            }
+
+            const summaries = document.getElementsByTagName('summary');
+            for (let i = 0; i < summaries.length; i++) {
+                const summary = summaries[i];
+                const detail = summary.parentElement;
+                let parentDetails = detail.parentElement.closest('details');
+
+                if (summary.innerHTML.toLowerCase().includes(search)) {
+                    detail.setAttribute("open", "");
+                    summary.classList.add("tree__search-result");
+                    while (parentDetails) {
+                        parentDetails.setAttribute("open", "");
+                        parentDetails = parentDetails.parentElement.closest('details');
+                    }
+                } else {
+                    summary.classList.remove("tree__search-result");
+                    detail.removeAttribute("open");
+                }
+            }
         }
     </script>
 </body>

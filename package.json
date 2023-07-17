@@ -51,6 +51,7 @@
         "viewType": "profileviewer.profileTreeEditor",
         "displayName": "Profile Tree",
         "priority": "option",
+        "icon": "$(circuit-board)",
         "selector": [
           {
             "filenamePattern": "*"
@@ -61,6 +62,7 @@
         "viewType": "profileviewer.profileFlameGraphViewer",
         "displayName": "Profile Flame Graph",
         "priority": "option",
+        "icon": "$(flame)",
         "selector": [
           {
             "filenamePattern": "*"
@@ -84,6 +86,7 @@
     "@types/node": "20.2.5",
     "@typescript-eslint/eslint-plugin": "^5.59.8",
     "@typescript-eslint/parser": "^5.59.8",
+    "@vscode/codicons": "0.0.20",
     "eslint": "^8.41.0",
     "glob": "^8.1.0",
     "mocha": "^10.2.0",
