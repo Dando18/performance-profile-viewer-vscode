@@ -50,9 +50,12 @@ export class FlameGraphView implements vscode.CustomReadonlyEditorProvider {
 
         webviewPanel.webview.onDidReceiveMessage(this.onDidReceiveMessage, undefined, this.context.subscriptions);
         
-        const tree = await document.getContents();
-        tree.setValueMetric("time (inc)", true);
-        webviewPanel.webview.html = this.getHtmlForWebview(tree.getTreeWithSingleRoot());
+        document.getContents().then((tree: ProfilerOutputTree) => {
+            tree.setValueMetric("time (inc)", true);
+            webviewPanel.webview.html = this.getHtmlForWebview(tree.getTreeWithSingleRoot());
+        }, (reason: any) => {
+            vscode.window.showErrorMessage(`Error parsing profile: ${reason.message}`);
+        });
     }
 
     openCustomDocument(uri: vscode.Uri): vscode.CustomDocument {

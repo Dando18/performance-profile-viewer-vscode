@@ -15,7 +15,7 @@ def error(code: int, message: str, do_exit: bool = False):
 try:
     import numpy as np
 except ImportError:
-    error(1000, "Numpy is not installed. Please install it by running \"pip install numpy\"", True)
+    error(1000, "NumPy is not installed. Please install it by running \"pip install numpy\"", True)
 
 # try to import hatchet
 try:
@@ -97,7 +97,6 @@ def identify_time_metric(gf: ht.GraphFrame) -> str:
 
 def normalize_time_metric(gf: ht.GraphFrame) -> str:
     time_column_name_map = {
-        "time": "time (inc)",
         "REALTIME (sec) (I)": "time (inc)",
         "REALTIME (sec) (E)": "time (exc)"
     }

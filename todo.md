@@ -10,7 +10,7 @@
 - [x] Add flamegraph view
 - [x] Add "Collapse All" button to tree view
 - [ ] ~~Change to vscode webview ui toolkit for webview styling~~
-- [ ] Review and improve error handling
+- [x] Review and improve error handling
 - [ ] Add CG/CCT view
 - [ ] Add default Profile commands (similar to build/run commands)
 - [x] Load cprofile profile: add and test

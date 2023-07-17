@@ -74,8 +74,11 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
         webviewPanel.webview.onDidReceiveMessage(this.onDidReceiveMessage, undefined, this.context.subscriptions);
 
         // Set the webview's initial html content
-        const tree: ProfilerOutputTree = await document.getContents();
-        webviewPanel.webview.html = await this.getHtmlForWebview(tree, webviewPanel.webview);
+        document.getContents().then(async (tree: ProfilerOutputTree) => {
+            webviewPanel.webview.html = await this.getHtmlForWebview(tree, webviewPanel.webview);
+        }, (reason: any) => {
+            vscode.window.showErrorMessage(`Error parsing profile: ${reason.message}`);
+        });
     }
   
     openCustomDocument(_uri: vscode.Uri): vscode.CustomDocument {

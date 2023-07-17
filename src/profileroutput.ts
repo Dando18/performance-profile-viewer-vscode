@@ -219,7 +219,12 @@ export class ProfilerOutput implements vscode.Disposable {
 			  if (code === 0) {
 				resolve(ProfilerOutputTree.fromString(output)); // Resolve the promise with the output
 			  } else {
-				reject(new Error(`Python script exited with code ${code}`));
+                try {
+                    const error = JSON.parse(output).error;
+                    reject(new Error(`${error.code} -- ${error.message}`));
+                } catch (e) {
+				    reject(new Error(`Python script exited with code ${code}`));
+                }
 			  }
 			});
 	  
