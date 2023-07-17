@@ -21,7 +21,27 @@ export const PROFILER_OUTPUT_TYPES = {
     pyinstrument: {
         name: "PyInstrument",
         isDirectory: false
-    }
+    },
+    scorep: {
+        name: "ScoreP",
+        isDirectory: false
+    },
+    spotdb: {
+        name: "Spot",
+        isDirectory: false
+    },
+    gprof: {
+        name: "GProf",
+        isDirectory: false
+    },
+    timememory: {
+        name: "TimeMemory",
+        isDirectory: false
+    },
+    cprofile: {
+        name: "CProfile",
+        isDirectory: false
+    },
 };
 
 /**
@@ -58,6 +78,10 @@ export class ProfilerOutputNode {
 
     public getFilename(): string | undefined {
         return this.attributes.file;
+    }
+
+    public isOnHotPath(): boolean {
+        return this.attributes.hasOwnProperty("hot_path") && this.attributes["hot_path"];
     }
 
     private async fileExists(filename: string): Promise<boolean> {
@@ -122,6 +146,7 @@ export class ProfilerOutputTree {
             return this.roots[0];
         } else {
             const rootIncTime = this.getMaxInclusiveTime();
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             return new ProfilerOutputNode("root", {name: "root", type: "root"}, {time: 0, "time (inc)": rootIncTime}, {}, this.roots);
         }
     }

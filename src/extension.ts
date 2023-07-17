@@ -5,8 +5,8 @@ import { FlameGraphView } from './flamegraph';
 
 
 const SCHEME_TO_VIEW_TYPE: {[key: string]: string} = {
-	"profile-tree": ProfileTreeEditor.viewType,
-	"profile-flamegraph": FlameGraphView.viewType
+	profileTree: ProfileTreeEditor.viewType,
+	profileFlameGraph: FlameGraphView.viewType
 };
 
 function selectPathAndOpen(source: string, expectsDir: boolean, schemes: string[]): void  {
@@ -73,14 +73,8 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		});
 
-	/* register commands */
-	for (const [profileType, profileInfo] of Object.entries(PROFILER_OUTPUT_TYPES)) {
-		const commandName = `profileviewer.open${profileInfo.name}Profile`;
-		let command = vscode.commands.registerCommand(commandName, () => selectPathAndOpen(profileType, profileInfo.isDirectory, ["profile-tree", "profile-flamegraph"]));
-		context.subscriptions.push(command);
-	}
-
-	let openProfileCommand = vscode.commands.registerCommand('profileviewer.openProfile', () => openProfile(["profile-tree", "profile-flamegraph"]));
+	/* register command to open profile */
+	let openProfileCommand = vscode.commands.registerCommand('profileviewer.openProfile', () => openProfile(["profileTree", "profileFlameGraph"]));
 	context.subscriptions.push(openProfileCommand);
 
 }

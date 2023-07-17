@@ -7,32 +7,12 @@
     "vscode": "^1.79.0"
   },
   "categories": [
-    "Profile"
+    "Other"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
-      {
-        "command": "profileviewer.openHPCToolkitProfile",
-        "title": "Open HPCToolkit Profile",
-        "category": "Profile"
-      },
-      {
-        "command": "profileviewer.openCaliperProfile",
-        "title": "Open Caliper Profile",
-        "category": "Profile"
-      },
-      {
-        "command": "profileviewer.openTAUProfile",
-        "title": "Open TAU Profile",
-        "category": "Profile"
-      },
-      {
-        "command": "profileviewer.openPyInstrumentProfile",
-        "title": "Open PyInstrument Profile",
-        "category": "Profile"
-      },
       {
         "command": "profileviewer.openProfile",
         "title": "Open Profile",

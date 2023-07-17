@@ -45,6 +45,16 @@ def read_profile(fpath: os.PathLike, ptype: str):
         return ht.GraphFrame.from_tau(fpath)
     elif ptype == 'pyinstrument':
         return ht.GraphFrame.from_pyinstrument(fpath)
+    elif ptype == 'scorep':
+        return ht.GraphFrame.from_scorep(fpath)
+    elif ptype == 'spotdb':
+        return ht.GraphFrame.from_spotdb(fpath)
+    elif ptype == 'gprof':
+        return ht.GraphFrame.from_gprof(fpath)
+    elif ptype == 'timememory':
+        return ht.GraphFrame.from_timememory(fpath)
+    elif ptype == 'cprofile':
+        return ht.GraphFrame.from_cprofile(fpath)
     else:
         raise ValueError(f"Unknown profile type: {ptype}")
 

@@ -13,10 +13,10 @@
 - [ ] Review and improve error handling
 - [ ] Add CG/CCT view
 - [ ] Add default Profile commands (similar to build/run commands)
-- [ ] Load cprofile profile: add and test
-- [ ] Load gprof profile: add and test
-- [ ] Load scorep profile: add and test
-- [ ] Load tau profile: add and test
-- [ ] Load spotdb profile: add and test
-- [ ] Load timememory profile: add and test
+- [x] Load cprofile profile: add and test
+- [x] Load gprof profile: add and test
+- [x] Load scorep profile: add and test
+- [x] Load tau profile: add and test
+- [x] Load spotdb profile: add and test
+- [x] Load timememory profile: add and test
 - [ ] Publish
