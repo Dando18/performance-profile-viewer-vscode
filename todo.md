@@ -1,15 +1,15 @@
 # todo
 
 - [x] Create unified "Profile" pane on left
-- [ ] Properly handle different times column names
+- [x] Properly handle different times column names
 - [x] Open file from profile treeviewer -- add button to right of line
 - [x] Add "Select Profile Type" dropdown menu
 - [x] Add "Open New Profile" button to top of tree view
 - [x] Put tree view in editor view
 - [x] Add filter search bar above tree view
 - [x] Add flamegraph view
-- [ ] Add "Collapse All" button to tree view
-- [ ] Change to vscode webview ui toolkit for webview styling
+- [x] Add "Collapse All" button to tree view
+- [ ] ~~Change to vscode webview ui toolkit for webview styling~~
 - [ ] Review and improve error handling
 - [ ] Add CG/CCT view
 - [ ] Add default Profile commands (similar to build/run commands)

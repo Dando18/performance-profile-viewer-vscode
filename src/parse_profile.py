@@ -95,6 +95,18 @@ def identify_time_metric(gf: ht.GraphFrame) -> str:
     raise ValueError("Could not identify a time metric in the profile")
 
 
+def normalize_time_metric(gf: ht.GraphFrame) -> str:
+    time_column_name_map = {
+        "time": "time (inc)",
+        "REALTIME (sec) (I)": "time (inc)",
+        "REALTIME (sec) (E)": "time (exc)"
+    }
+    for col in gf.dataframe.columns:
+        if col in time_column_name_map:
+            gf.dataframe.rename(columns={col: time_column_name_map[col]}, inplace=True)
+    return "time (inc)"
+
+
 def main():
     parser = ArgumentParser()
     parser.add_argument('--profile', type=str, required=True, help='Path to the profile file')
@@ -121,7 +133,7 @@ def main():
     # identify the metric
     METRIC_COLUMN = args.metric
     if args.metric == "time":
-        metric = identify_time_metric(gf)
+        METRIC_COLUMN = normalize_time_metric(gf)
 
     # parse out tree from profile
     try:
