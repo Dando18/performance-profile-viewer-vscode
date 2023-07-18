@@ -8,10 +8,9 @@
 - [x] Put tree view in editor view
 - [x] Add filter search bar above tree view
 - [x] Add flamegraph view
-- [x] Add "Collapse All" button to tree view
+- [x] Add "Open All" button to tree view
 - [ ] ~~Change to vscode webview ui toolkit for webview styling~~
 - [x] Review and improve error handling
-- [ ] Add CG/CCT view
 - [ ] Add default Profile commands (similar to build/run commands)
 - [x] Load cprofile profile: add and test
 - [x] Load gprof profile: add and test
@@ -19,4 +18,7 @@
 - [x] Load tau profile: add and test
 - [x] Load spotdb profile: add and test
 - [x] Load timememory profile: add and test
+- [ ] Create tests
+- [ ] Create testing CI
 - [ ] Publish
+- [ ] Create publishing CI
