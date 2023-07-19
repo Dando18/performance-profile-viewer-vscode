@@ -10,7 +10,6 @@ function doesPythonHaveModules(pythonPath: string, modules: string[]): boolean {
             return true;
         }
     } catch (err) {
-        console.log(err);
         return false;
     }
     return false;
@@ -49,7 +48,8 @@ export async function getPythonPath(imports?: string[]): Promise<string | vscode
     // check if Python3_ROOT_DIR is set
     const python3RootDir = process.env.Python3_ROOT_DIR;
     if (python3RootDir) {
-        const fpath = path.resolve(python3RootDir, "bin", "python");
+        let pythonExec = (process.platform === "win32") ? "python.exe" : "python";
+        const fpath = path.resolve(python3RootDir, "bin", pythonExec);
         if (!imports || doesPythonHaveModules(fpath, imports)) {
             return fpath;
         }
