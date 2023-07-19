@@ -24,11 +24,6 @@ jobs:
         with:
           python-version: '3.9'
           cache: 'pip'
-      - name: Fix MacOS Python Path
-        if: runner.os == 'macOS'
-        run: |
-          echo "$pythonLocation"  
-          echo 'export PATH="$pythonLocation/bin:$PATH"' | tee -a ~/.profile
       - name: Install Python Dependencies
         run: pip install -r requirements.txt
       - name: Run Linux Tests
@@ -39,8 +34,5 @@ jobs:
         run: npm test
       - name: Run macOS Tests
         if: runner.os == 'macOS'
-        run: |
-          export PATH="$pythonLocation/bin:$PATH"
-          echo 'export PATH="$pythonLocation/bin:$PATH"' | tee -a ~/.profile
-          npm test
+        run: npm test
 
