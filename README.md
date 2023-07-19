@@ -1,8 +1,15 @@
 # PerfView
 
 PerfView is an extension for viewing performance profiles directly in VSCode. 
-It can open profiles from [GProf](), [PyInstrument](), [CProfile](), 
-[HPCToolkit](), [Caliper](), [Tau](), [Score-P](), and [TimeMemory]().
+It can open profiles from 
+[GProf](https://ftp.gnu.org/old-gnu/Manuals/gprof-2.9.1/html_mono/gprof.html), 
+[PyInstrument](https://pyinstrument.readthedocs.io/en/latest/), 
+[CProfile](https://docs.python.org/3/library/profile.html#module-cProfile), 
+[HPCToolkit](http://hpctoolkit.org/), 
+[Caliper](https://software.llnl.gov/Caliper/), 
+[Tau](http://www.cs.uoregon.edu/research/tau/home.php), 
+[Score-P](https://www.vi-hps.org/projects/score-p/), 
+and [Timemory](https://github.com/NERSC/timemory).
 Currently it supports a view of the call tree with run times and a flamegraph.
 
 ## Features
