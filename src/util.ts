@@ -4,12 +4,12 @@ import * as process from 'child_process';
 
 function doesPythonHaveModules(pythonPath: string, modules: string[]): boolean {
     try {
-        let output = process.execSync(`${pythonPath} -c \"import ${modules.join("; import ")}\"`);
+        let output = process.execSync(`${pythonPath} -c \"import ${modules.join("; import ")};\"`);
         if (output) {
             return true;
         }
-    } catch (e) {
-        console.log(e);
+    } catch (err) {
+        console.log(err);
         return false;
     }
     return false;
