@@ -32,5 +32,8 @@ jobs:
         run: xvfb-run -a npm test
       - name: Run Tests
         if: runner.os != 'Linux'
-        run: npm test
+        run: |
+          python3 --version
+          which python3
+          npm test
 

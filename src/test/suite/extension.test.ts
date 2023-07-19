@@ -1,6 +1,8 @@
 import * as assert from 'assert';
 import * as path from 'path';
 
+import { execSync } from 'child_process';
+
 import * as vscode from 'vscode';
 import { ProfilerOutput } from '../../profileroutput';
 
@@ -12,6 +14,12 @@ suite('ProfileViewer Test Suite', () => {
 		assert.strictEqual(-1, [1, 2, 3].indexOf(0));
 	});
 
+	test('Run External Python', () => {
+		console.log(execSync("which python3"));
+
+		const pythonPath = execSync("python3 --version").toString();
+		assert.ok(pythonPath.startsWith("Python 3"));
+	});
 
 	test('Open PyInstrument Profile', async () => {
 		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
