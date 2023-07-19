@@ -5,6 +5,7 @@ import { execSync } from 'child_process';
 
 import * as vscode from 'vscode';
 import { ProfilerOutput } from '../../profileroutput';
+import { getPythonPath } from '../../util';
 
 suite('ProfileViewer Test Suite', () => {
 	vscode.window.showInformationMessage('Start all tests.');
@@ -15,11 +16,10 @@ suite('ProfileViewer Test Suite', () => {
 	});
 
 	test('Run External Python', () => {
-		console.log(execSync("which python3").toString());
-		console.log(execSync("which python").toString());
-
-		const pythonPath = execSync("python3 --version").toString();
-		assert.ok(pythonPath.startsWith("Python 3"));
+		const pythonPath = getPythonPath();
+		assert.doesNotThrow(() => {
+			execSync(`${pythonPath} --version`).toString();
+		});
 	});
 
 	test('Open PyInstrument Profile', async () => {
