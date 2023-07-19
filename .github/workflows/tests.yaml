@@ -43,11 +43,6 @@ jobs:
       - name: Run macOS Tests
         if: runner.os == 'macOS'
         run: |
-          python3 --version
-          python --version
-          which python3
-          which python
-          python -c "import numpy; import hatchet;"
           source .venv/bin/activate
           npm test
       - name: Run Windows Tests
