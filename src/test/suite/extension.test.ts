@@ -15,10 +15,10 @@ suite('ProfileViewer Test Suite', () => {
 		assert.strictEqual(-1, [1, 2, 3].indexOf(0));
 	});
 
-	test('Run External Python', () => {
-		const pythonPath = getPythonPath();
+	test('Run External Python', async () => {
+		const pythonPath = await getPythonPath();
 		assert.doesNotThrow(() => {
-			execSync(`${pythonPath} --version`).toString();
+			execSync(`${pythonPath} --version`);
 		});
 	});
 
