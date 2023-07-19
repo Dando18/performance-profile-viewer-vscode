@@ -9,6 +9,7 @@ function doesPythonHaveModules(pythonPath: string, modules: string[]): boolean {
             return true;
         }
     } catch (e) {
+        console.log(e);
         return false;
     }
     return false;
