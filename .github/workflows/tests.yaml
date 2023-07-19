@@ -31,7 +31,9 @@ jobs:
         run: xvfb-run -a npm test
       - name: Run Windows Tests
         if: runner.os == 'Windows'
-        run: npm test
+        run: |
+          dir C:\hostedtoolcache\windows\Python\3.9.13\x64\bin\
+          npm test
       - name: Run macOS Tests
         if: runner.os == 'macOS'
         run: npm test
