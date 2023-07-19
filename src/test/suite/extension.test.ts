@@ -15,7 +15,7 @@ suite('ProfileViewer Test Suite', () => {
 	});
 
 	test('Run External Python', () => {
-		throw new Error(execSync("which python3").toString());
+		console.log(execSync("which python3").toString());
 
 		const pythonPath = execSync("python3 --version").toString();
 		assert.ok(pythonPath.startsWith("Python 3"));
