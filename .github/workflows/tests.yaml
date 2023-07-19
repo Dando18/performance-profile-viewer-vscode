@@ -30,5 +30,6 @@ jobs:
         if: runner.os == 'Linux'
         run: xvfb-run -a npm test
       - name: Run Tests
+        if: runner.os != 'Linux'
         run: npm test
 
