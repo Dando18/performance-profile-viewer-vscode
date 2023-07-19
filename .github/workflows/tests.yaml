@@ -34,5 +34,5 @@ jobs:
         run: |
           python3 --version
           which python3
-          npm test -- --verbose
+          npm test
 
