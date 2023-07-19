@@ -24,6 +24,9 @@ jobs:
         with:
           python-version: '3.9'
           cache: 'pip'
+      - name: Fix MacOS Python Path
+        if: runner.os == 'macos-latest'
+        run: tee -a ~/.profile <<<'export PATH="$pythonLocation/bin:$PATH"'
       - name: Install Python Dependencies
         run: pip install -r requirements.txt
       - name: Run Linux Tests
@@ -31,8 +34,5 @@ jobs:
         run: xvfb-run -a npm test
       - name: Run Tests
         if: runner.os != 'Linux'
-        run: |
-          python3 --version
-          which python3
-          npm test
+        run: npm test
 
