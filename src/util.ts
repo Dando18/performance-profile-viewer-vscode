@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { execSync } from 'child_process';
 
 
@@ -48,8 +49,8 @@ export async function getPythonPath(imports?: string[]): Promise<string | vscode
     // check if Python3_ROOT_DIR is set
     const python3RootDir = process.env.Python3_ROOT_DIR;
     if (python3RootDir) {
-        const fpath = vscode.Uri.joinPath(vscode.Uri.file(python3RootDir), "bin", "python");
-        if (!imports || doesPythonHaveModules(fpath.fsPath, imports)) {
+        const fpath = path.resolve(python3RootDir, "bin", "python");
+        if (!imports || doesPythonHaveModules(fpath, imports)) {
             return fpath;
         }
     }
