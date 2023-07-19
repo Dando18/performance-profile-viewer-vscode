@@ -1,6 +1,8 @@
 on:
   push:
     branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
 
 jobs:
   build:
@@ -20,34 +22,14 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
-      - name: Create Python Virtual Environment
-        run: python3 -m venv .venv
+          python-version: '3.9'
+          cache: 'pip'
       - name: Install Python Dependencies
-        if: runner.os != 'Windows'
-        run: |
-          source .venv/bin/activate
-          python -m pip install --upgrade pip
-          pip install hatchet==1.3.1
-      - name: Install Python Dependencies [Windows]
-        if: runner.os == 'Windows'
-        run: |
-          .venv\Scripts\activate
-          python -m pip install --upgrade pip
-          pip install hatchet==1.3.1
+        run: pip install -r requirements.txt
       - name: Run Linux Tests
         if: runner.os == 'Linux'
-        run: |
-          source .venv/bin/activate
-          xvfb-run -a npm test
-      - name: Run macOS Tests
-        if: runner.os == 'macOS'
-        run: |
-          source .venv/bin/activate
-          npm test
-      - name: Run Windows Tests
-        if: runner.os == 'Windows'
-        run: |
-          .venv\Scripts\activate
-          npm test
+        run: xvfb-run -a npm test
+      - name: Run Tests
+        if: runner.os != 'Linux'
+        run: npm test
 

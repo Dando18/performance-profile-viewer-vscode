@@ -1,15 +1,15 @@
 import * as vscode from 'vscode';
-import * as process from 'child_process';
+import * as path from 'path';
+import { execSync } from 'child_process';
 
 
 function doesPythonHaveModules(pythonPath: string, modules: string[]): boolean {
     try {
-        let output = process.execSync(`${pythonPath} -c \"import ${modules.join("; import ")};\"`);
+        let output = execSync(`${pythonPath} -c \"import ${modules.join("; import ")};\"`);
         if (output) {
             return true;
         }
     } catch (err) {
-        console.log(err);
         return false;
     }
     return false;
@@ -19,6 +19,7 @@ function doesPythonHaveModules(pythonPath: string, modules: string[]): boolean {
  * First checks if the Python extension is installed, and if so, uses the
  * python.interpreterPath. 
  * If not, it checks the python.pythonPath setting.
+ * Then it checks it Python3_ROOT_DIR environment variable is set.
  * Then try running `python3 --version` in shell. If it is successful, use that.
  * Otherwise, return "python"
  * @returns the path to the python executable
@@ -44,9 +45,19 @@ export async function getPythonPath(imports?: string[]): Promise<string | vscode
         }
     }
 
+    // check if Python3_ROOT_DIR is set
+    const python3RootDir = process.env.Python3_ROOT_DIR;
+    if (python3RootDir) {
+        let pythonExec = (process.platform === "win32") ? "python.exe" : "bin/python";
+        const fpath = path.resolve(python3RootDir, pythonExec);
+        if (!imports || doesPythonHaveModules(fpath, imports)) {
+            return fpath;
+        }
+    }
+
     // check if python3 is available
     try {
-        let output = process.execSync("python3 --version");
+        let output = execSync("python3 --version");
         if (output) {
             if (!imports || doesPythonHaveModules("python3", imports)) {
                 return "python3";
