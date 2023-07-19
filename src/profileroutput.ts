@@ -202,6 +202,7 @@ export class ProfilerOutput implements vscode.Disposable {
         return new Promise<ProfilerOutputTree>((resolve, reject) => {
             getPythonPath().then((pythonPath: string | vscode.Uri) => {
                 const pythonScriptPath = path.join(__dirname, '..', 'src', 'parse_profile.py');
+                console.log(this.uri.path);
                 this.process = spawn(`${pythonPath}`, [pythonScriptPath, "--profile", this.uri.path, "--type", this.type, "--hot-path"]);
 
                 // Collect the output from the Python script
