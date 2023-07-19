@@ -1,15 +1,29 @@
 import * as assert from 'assert';
+import * as path from 'path';
 
-// You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
 import * as vscode from 'vscode';
-// import * as myExtension from '../../extension';
+import { ProfilerOutput } from '../../profileroutput';
 
-suite('Extension Test Suite', () => {
+suite('ProfileViewer Test Suite', () => {
 	vscode.window.showInformationMessage('Start all tests.');
 
 	test('Sample test', () => {
 		assert.strictEqual(-1, [1, 2, 3].indexOf(5));
 		assert.strictEqual(-1, [1, 2, 3].indexOf(0));
+	});
+
+
+	test('Open PyInstrument Profile', async () => {
+		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+
+		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'pyinstrument', 'pyinstrument.json');
+		let profile = new ProfilerOutput(fpath, "pyinstrument", false);
+
+		assert.strictEqual(profile.type, "pyinstrument");
+		assert.strictEqual(profile.isDirectory, false);
+
+		let tree = await profile.getTree();
+		assert.strictEqual(tree.roots.length, 1);
+		assert.ok(Math.abs(tree.getMaxInclusiveTime() - 0.1705) < 0.0001);
 	});
 });
