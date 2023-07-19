@@ -26,7 +26,6 @@ suite('ProfileViewer Test Suite', () => {
 		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
 
 		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'pyinstrument', 'pyinstrument.json');
-		console.log(fpath);
 		let profile = new ProfilerOutput(fpath, "pyinstrument", false);
 
 		assert.strictEqual(profile.type, "pyinstrument");

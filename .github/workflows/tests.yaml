@@ -29,10 +29,6 @@ jobs:
       - name: Run Linux Tests
         if: runner.os == 'Linux'
         run: xvfb-run -a npm test
-      - name: Run Windows Tests
-        if: runner.os == 'Windows'
-        run: npm test
-      - name: Run macOS Tests
-        if: runner.os == 'macOS'
+      - name: Run Tests
         run: npm test
 
