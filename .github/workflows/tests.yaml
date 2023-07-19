@@ -27,7 +27,8 @@ jobs:
       - name: Fix MacOS Python Path
         if: runner.os == 'macOS'
         run: |
-          tee -a ~/.profile <<<'export PATH="$pythonLocation/bin:$PATH"'
+          echo "$pythonLocation"  
+          echo 'export PATH="$pythonLocation/bin:$PATH"' | tee -a ~/.profile
       - name: Install Python Dependencies
         run: pip install -r requirements.txt
       - name: Run Linux Tests
@@ -40,5 +41,6 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           export PATH="$pythonLocation/bin:$PATH"
+          echo 'export PATH="$pythonLocation/bin:$PATH"' | tee -a ~/.profile
           npm test
 
