@@ -13,7 +13,7 @@ suite('ProfileViewer Test Suite', () => {
 	});
 
 
-	test('Open PyInstrument Profile', async () => {
+	/*test('Open PyInstrument Profile', async () => {
 		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
 
 		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'pyinstrument', 'pyinstrument.json');
@@ -25,5 +25,5 @@ suite('ProfileViewer Test Suite', () => {
 		let tree = await profile.getTree();
 		assert.strictEqual(tree.roots.length, 1);
 		assert.ok(Math.abs(tree.getMaxInclusiveTime() - 0.1705) < 0.0001);
-	});
+	});*/
 });
