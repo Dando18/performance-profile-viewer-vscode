@@ -32,7 +32,7 @@ jobs:
       - name: Run Windows Tests
         if: runner.os == 'Windows'
         run: |
-          dir C:\hostedtoolcache\windows\Python\3.9.13\x64\bin\
+          dir C:\hostedtoolcache\windows\Python\3.9.13\x64\
           npm test
       - name: Run macOS Tests
         if: runner.os == 'macOS'
