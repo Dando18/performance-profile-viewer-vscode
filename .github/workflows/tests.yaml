@@ -44,6 +44,10 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           source .venv/bin/activate
+          python3 --version
+          python --version
+          which python3
+          which python
           npm test
       - name: Run Windows Tests
         if: runner.os == 'Windows'
