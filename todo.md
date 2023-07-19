@@ -18,7 +18,7 @@
 - [x] Load tau profile: add and test
 - [x] Load spotdb profile: add and test
 - [x] Load timememory profile: add and test
-- [ ] Create tests
-- [ ] Create testing CI
+- [x] Create tests
+- [x] Create testing CI
 - [ ] Publish
 - [ ] Create publishing CI
