@@ -26,13 +26,19 @@ jobs:
           cache: 'pip'
       - name: Fix MacOS Python Path
         if: runner.os == 'macOS'
-        run: tee -a ~/.profile <<<'export PATH="$pythonLocation/bin:$PATH"'
+        run: |
+          tee -a ~/.profile <<<'export PATH="$pythonLocation/bin:$PATH"'
       - name: Install Python Dependencies
         run: pip install -r requirements.txt
       - name: Run Linux Tests
         if: runner.os == 'Linux'
         run: xvfb-run -a npm test
-      - name: Run Tests
-        if: runner.os != 'Linux'
+      - name: Run Windows Tests
+        if: runner.os == 'Windows'
         run: npm test
+      - name: Run macOS Tests
+        if: runner.os == 'macOS'
+        run: |
+          export PATH="$pythonLocation/bin:$PATH"
+          npm test
 
