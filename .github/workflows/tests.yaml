@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: 3.9
       - name: Create Python Virtual Environment
-        run: python3.9 -m venv .venv
+        run: python3 -m venv .venv
       - name: Activate Python Virtual Environment
         run: source .venv/bin/activate
         if: runner.os != 'Windows'
