@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { spawn, ChildProcess } from 'child_process';
+import { getPythonPath } from './util';
 
 /**
  * Types of supported profiler outputs and their properties.
@@ -199,42 +200,46 @@ export class ProfilerOutput implements vscode.Disposable {
 
     public getTree(): Thenable<ProfilerOutputTree> {
         return new Promise<ProfilerOutputTree>((resolve, reject) => {
-			const pythonScriptPath = path.join(__dirname, '..', 'src', 'parse_profile.py');
-			this.process = spawn("python3", [pythonScriptPath, "--profile", this.uri.path, "--type", this.type, "--hot-path"]);
+            getPythonPath().then((pythonPath: string | vscode.Uri) => {
+                console.log(pythonPath);
+                
+                const pythonScriptPath = path.join(__dirname, '..', 'src', 'parse_profile.py');
+                this.process = spawn(`${pythonPath}`, [pythonScriptPath, "--profile", this.uri.path, "--type", this.type, "--hot-path"]);
 
-			// Collect the output from the Python script
-			let output = '';
-			if (this.process.stdout) {
-				this.process.stdout.on('data', (data: Buffer) => {
-					output += data.toString();
-				});
-			}
-
-            let stderr = '';
-            if (this.process.stderr) {
-                this.process.stderr.on('data', (data: Buffer) => {
-                    stderr += data.toString();
-                });
-            }
-	  
-			// Handle the completion of the Python script
-			this.process.on('close', (code: number) => {
-			  if (code === 0) {
-				resolve(ProfilerOutputTree.fromString(output)); // Resolve the promise with the output
-			  } else {
-                try {
-                    const error = JSON.parse(output).error;
-                    reject(new Error(`${error.code} -- ${error.message}`));
-                } catch (e) {
-				    reject(new Error(`Python script exited with code ${code}`));
+                // Collect the output from the Python script
+                let output = '';
+                if (this.process.stdout) {
+                    this.process.stdout.on('data', (data: Buffer) => {
+                        output += data.toString();
+                    });
                 }
-			  }
-			});
-	  
-			// Handle errors in the Python process
-			this.process.on('error', (err: Error) => {
-			  reject(err);
-			});
+
+                let stderr = '';
+                if (this.process.stderr) {
+                    this.process.stderr.on('data', (data: Buffer) => {
+                        stderr += data.toString();
+                    });
+                }
+        
+                // Handle the completion of the Python script
+                this.process.on('close', (code: number) => {
+                if (code === 0) {
+                    resolve(ProfilerOutputTree.fromString(output)); // Resolve the promise with the output
+                } else {
+                    try {
+                        const error = JSON.parse(output).error;
+                        reject(new Error(`${error.code} -- ${error.message}`));
+                    } catch (e) {
+                        reject(new Error(`Python script exited with code ${code}`));
+                    }
+                }
+                });
+        
+                // Handle errors in the Python process
+                this.process.on('error', (err: Error) => {
+                reject(err);
+                });
+            });
 		});
     }
 

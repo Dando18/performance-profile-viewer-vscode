@@ -10,13 +10,13 @@ It can open profiles from
 [Tau](http://www.cs.uoregon.edu/research/tau/home.php), 
 [Score-P](https://www.vi-hps.org/projects/score-p/), 
 and [Timemory](https://github.com/NERSC/timemory).
-Currently it supports a view of the call tree with run times and a flamegraph.
+Currently it supports a view of the call graph with run times and a flamegraph.
 
 ## Features
 
-Open profiles using the command `Profile: Open Profile`.
+Open profiles using the command `Profile: Open Profile` (CTRL+SHIFT+P or CMD+SHIFT+P to start commands).
 You will be asked for the type of profile and path to the profile.
-Then it will open in a tree and flamegraph view.
+Then it will open in a tree and flamegraph view as shown below.
 
 ![Opening Profile](images/opening-profile.gif)
 
@@ -30,8 +30,9 @@ to the corresponding source code locations.
 
 ## Requirements
 
-PerfView uses the Python library [Hatchet]() to parse and process the different
-profile types.
+PerfView uses the Python library 
+[Hatchet](https://hatchet.readthedocs.io/en/latest/) 
+to parse and process the different profile types.
 You must install it in order to use the extension.
 Assuming there is a valid Python installation, then it can be installed with 
 `pip install hatchet`.
