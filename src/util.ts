@@ -48,8 +48,8 @@ export async function getPythonPath(imports?: string[]): Promise<string | vscode
     // check if Python3_ROOT_DIR is set
     const python3RootDir = process.env.Python3_ROOT_DIR;
     if (python3RootDir) {
-        let pythonExec = (process.platform === "win32") ? "python.exe" : "python";
-        const fpath = path.resolve(python3RootDir, "bin", pythonExec);
+        let pythonExec = (process.platform === "win32") ? "python.exe" : "bin/python";
+        const fpath = path.resolve(python3RootDir, pythonExec);
         if (!imports || doesPythonHaveModules(fpath, imports)) {
             return fpath;
         }
