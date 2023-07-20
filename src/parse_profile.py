@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 import json
 import os
+import traceback
 
 
 def error(code: int, message: str, do_exit: bool = False):
@@ -48,9 +49,9 @@ def read_profile(fpath: os.PathLike, ptype: str):
     elif ptype == 'scorep':
         return ht.GraphFrame.from_scorep(fpath)
     elif ptype == 'gprof':
-        return ht.GraphFrame.from_gprof(fpath)
-    elif ptype == 'timememory':
-        return ht.GraphFrame.from_timememory(fpath)
+        return ht.GraphFrame.from_gprof_dot(fpath)
+    elif ptype == 'timemory':
+        return ht.GraphFrame.from_timemory(fpath)
     elif ptype == 'cprofile':
         return ht.GraphFrame.from_cprofile(fpath)
     else:
@@ -108,7 +109,7 @@ def main():
     parser = ArgumentParser()
     parser.add_argument('--profile', type=str, required=True, help='Path to the profile file')
     parser.add_argument('--type', type=str, 
-        choices=['hpctoolkit', 'caliper', 'tau', 'pyinstrument', 'scorep', 'gprof', 'timememory', 'cprofile'], 
+        choices=['hpctoolkit', 'caliper', 'tau', 'pyinstrument', 'scorep', 'gprof', 'timemory', 'cprofile'], 
         default='hpctoolkit', help='Type of the profile file')
     parser.add_argument('--hot-path', action='store_true', help='Whether to include the hot path in the output')
     parser.add_argument('--metric', type=str, default='time', help='Metric to use for the hot path')
@@ -116,7 +117,7 @@ def main():
 
     # check that path exists
     if not os.path.exists(args.profile):
-        error(1002, "Profile path does not exist", True)
+        error(1002, f"Profile path does not exist. {e}\n{traceback.format_exc()}", True)
 
     # read the profile
     try:
@@ -124,7 +125,7 @@ def main():
     except ValueError as e:
         error(1003, str(e), True)
     except Exception as e:
-        error(1004, "Unknown error reading in profile.", True)
+        error(1004, f"Unknown error reading in profile. {e}\n{traceback.format_exc()}", True)
 
     # collapse across ranks
     gf.drop_index_levels()
@@ -138,7 +139,7 @@ def main():
     try:
         tree = get_tree(gf)
     except Exception as e:
-        error(1005, "Unknown error parsing out tree from profile.", True)
+        error(1005, f"Unknown error parsing out tree from profile. {e}\n{traceback.format_exc()}", True)
 
     # get the hot path
     if args.hot_path:

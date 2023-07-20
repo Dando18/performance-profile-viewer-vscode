@@ -17,7 +17,7 @@
 - [x] Load scorep profile: add and test
 - [x] Load tau profile: add and test
 - [x] Load spotdb profile: add and test
-- [x] Load timememory profile: add and test
+- [x] Load timemory profile: add and test
 - [x] Create tests
 - [x] Create testing CI
 - [ ] Publish

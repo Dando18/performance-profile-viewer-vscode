@@ -50,6 +50,6 @@ No settings right now.
 ### 0.0.1
 
 Initial release. Support for [GProf](), [PyInstrument](), [CProfile](), 
-[HPCToolkit](), [Caliper](), [Tau](), [Score-P](), and [TimeMemory]().
+[HPCToolkit](), [Caliper](), [Tau](), [Score-P](), and [Timemory]().
 
 
