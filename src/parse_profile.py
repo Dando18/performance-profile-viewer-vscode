@@ -116,7 +116,7 @@ def main():
 
     # check that path exists
     if not os.path.exists(args.profile):
-        error(1002, "Profile path does not exist", True)
+        error(1002, f"Profile path does not exist. {e}", True)
 
     # read the profile
     try:
@@ -124,7 +124,7 @@ def main():
     except ValueError as e:
         error(1003, str(e), True)
     except Exception as e:
-        error(1004, "Unknown error reading in profile.", True)
+        error(1004, f"Unknown error reading in profile. {e}", True)
 
     # collapse across ranks
     gf.drop_index_levels()
@@ -138,7 +138,7 @@ def main():
     try:
         tree = get_tree(gf)
     except Exception as e:
-        error(1005, "Unknown error parsing out tree from profile.", True)
+        error(1005, f"Unknown error parsing out tree from profile. {e}", True)
 
     # get the hot path
     if args.hot_path:
