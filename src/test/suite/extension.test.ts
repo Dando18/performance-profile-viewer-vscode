@@ -6,6 +6,7 @@ import { execSync } from 'child_process';
 import * as vscode from 'vscode';
 import { ProfilerOutput } from '../../profileroutput';
 import { ProfileTreeEditor } from '../../profiletree';
+import { FlameGraphView } from '../../flamegraph';
 import { getPythonPath } from '../../util';
 
 suite('ProfileViewer Test Suite', () => {
@@ -35,6 +36,21 @@ suite('ProfileViewer Test Suite', () => {
 
 		assert.doesNotThrow(async () => {
 			await vscode.commands.executeCommand('vscode.openWith', profileUri, ProfileTreeEditor.viewType, vscode.ViewColumn.One);
+		});
+	});
+
+	test('Open FlameGraph View', async () => {
+		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+
+		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'pyinstrument', 'pyinstrument.json');
+		const profileUri = vscode.Uri.from({
+			scheme: "profileFlameGraph",
+			path: fpath.fsPath,
+			query: JSON.stringify({type: "pyinstrument"})
+		});	
+
+		assert.doesNotThrow(async () => {
+			await vscode.commands.executeCommand('vscode.openWith', profileUri, FlameGraphView.viewType, vscode.ViewColumn.One);
 		});
 	});
 
