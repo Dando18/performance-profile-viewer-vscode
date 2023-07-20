@@ -68,6 +68,20 @@ suite('ProfileViewer Test Suite', () => {
 		assert.ok(Math.abs(tree.getMaxInclusiveTime() - 0.1705) < 0.0001);
 	});
 
+	test('Open CProfile Profile', async () => {
+		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+
+		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'cprofile', 'cprofile.pstats');
+		let profile = new ProfilerOutput(fpath, "cprofile", false);
+
+		assert.strictEqual(profile.type, "cprofile");
+		assert.strictEqual(profile.isDirectory, false);
+
+		let tree = await profile.getTree();
+		assert.strictEqual(tree.roots.length, 2);
+		assert.ok(Math.abs(tree.getMaxInclusiveTime() - 23.0226) < 0.0001, `Expected ${tree.getMaxInclusiveTime()} to be close to 23.0226`);
+	});
+
 	test('Open Caliper Profile', async () => {
 		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
 
