@@ -67,4 +67,18 @@ suite('ProfileViewer Test Suite', () => {
 		assert.strictEqual(tree.roots.length, 1);
 		assert.ok(Math.abs(tree.getMaxInclusiveTime() - 0.1705) < 0.0001);
 	});
+
+	test('Open Caliper Profile', async () => {
+		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+
+		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'caliper', 'caliper.json');
+		let profile = new ProfilerOutput(fpath, "caliper", false);
+
+		assert.strictEqual(profile.type, "caliper");
+		assert.strictEqual(profile.isDirectory, false);
+
+		let tree = await profile.getTree();
+		assert.strictEqual(tree.roots.length, 1);
+		assert.ok(Math.abs(tree.getMaxInclusiveTime() - 5889901.5) < 0.0001);
+	});
 });
