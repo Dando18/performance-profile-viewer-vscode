@@ -5,6 +5,7 @@ import { execSync } from 'child_process';
 
 import * as vscode from 'vscode';
 import { ProfilerOutput } from '../../profileroutput';
+import { ProfileTreeEditor } from '../../profiletree';
 import { getPythonPath } from '../../util';
 
 suite('ProfileViewer Test Suite', () => {
@@ -19,6 +20,21 @@ suite('ProfileViewer Test Suite', () => {
 		const pythonPath = await getPythonPath();
 		assert.doesNotThrow(() => {
 			execSync(`${pythonPath} --version`);
+		});
+	});
+
+	test('Open Tree View', async () => {
+		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+
+		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'pyinstrument', 'pyinstrument.json');
+		const profileUri = vscode.Uri.from({
+			scheme: "profileTree",
+			path: fpath.fsPath,
+			query: JSON.stringify({type: "pyinstrument"})
+		});	
+
+		assert.doesNotThrow(async () => {
+			await vscode.commands.executeCommand('vscode.openWith', profileUri, ProfileTreeEditor.viewType, vscode.ViewColumn.One);
 		});
 	});
 
