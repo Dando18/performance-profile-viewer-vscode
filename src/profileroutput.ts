@@ -31,8 +31,8 @@ export const PROFILER_OUTPUT_TYPES = {
         name: "GProf",
         isDirectory: false
     },
-    timememory: {
-        name: "TimeMemory",
+    timemory: {
+        name: "Timemory",
         isDirectory: false
     },
     cprofile: {

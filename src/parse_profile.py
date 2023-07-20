@@ -48,9 +48,9 @@ def read_profile(fpath: os.PathLike, ptype: str):
     elif ptype == 'scorep':
         return ht.GraphFrame.from_scorep(fpath)
     elif ptype == 'gprof':
-        return ht.GraphFrame.from_gprof(fpath)
-    elif ptype == 'timememory':
-        return ht.GraphFrame.from_timememory(fpath)
+        return ht.GraphFrame.from_gprof_dot(fpath)
+    elif ptype == 'timemory':
+        return ht.GraphFrame.from_timemory(fpath)
     elif ptype == 'cprofile':
         return ht.GraphFrame.from_cprofile(fpath)
     else:
@@ -108,7 +108,7 @@ def main():
     parser = ArgumentParser()
     parser.add_argument('--profile', type=str, required=True, help='Path to the profile file')
     parser.add_argument('--type', type=str, 
-        choices=['hpctoolkit', 'caliper', 'tau', 'pyinstrument', 'scorep', 'gprof', 'timememory', 'cprofile'], 
+        choices=['hpctoolkit', 'caliper', 'tau', 'pyinstrument', 'scorep', 'gprof', 'timemory', 'cprofile'], 
         default='hpctoolkit', help='Type of the profile file')
     parser.add_argument('--hot-path', action='store_true', help='Whether to include the hot path in the output')
     parser.add_argument('--metric', type=str, default='time', help='Metric to use for the hot path')

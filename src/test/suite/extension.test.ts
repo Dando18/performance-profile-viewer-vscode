@@ -95,4 +95,74 @@ suite('ProfileViewer Test Suite', () => {
 		assert.strictEqual(tree.roots.length, 1);
 		assert.ok(Math.abs(tree.getMaxInclusiveTime() - 5889901.5) < 0.0001);
 	});
+
+	test('Open GProf Profile', async () => {
+		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+
+		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'gprof', 'gprof.dot');
+		let profile = new ProfilerOutput(fpath, "gprof", false);
+
+		assert.strictEqual(profile.type, "gprof");
+		assert.strictEqual(profile.isDirectory, false);
+
+		let tree = await profile.getTree();
+		assert.strictEqual(tree.roots.length, 7);
+		assert.ok(Math.abs(tree.getMaxInclusiveTime() - 97.95) < 0.0001);
+	});
+
+	test('Open Timemory Profile', async () => {
+		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+
+		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'timemory', 'timemory.json');
+		let profile = new ProfilerOutput(fpath, "timemory", false);
+
+		assert.strictEqual(profile.type, "timemory");
+		assert.strictEqual(profile.isDirectory, false);
+
+		let tree = await profile.getTree();
+		assert.strictEqual(tree.roots.length, 2);
+		assert.ok(Math.abs(tree.getMaxInclusiveTime() - 0) < 0.0001);
+	});
+
+	test('Open HPCToolkit Profile', async () => {
+		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+
+		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'hpctoolkit', 'hpctoolkit-database');
+		let profile = new ProfilerOutput(fpath, "hpctoolkit", true);
+
+		assert.strictEqual(profile.type, "hpctoolkit");
+		assert.strictEqual(profile.isDirectory, true);
+
+		let tree = await profile.getTree();
+		assert.strictEqual(tree.roots.length, 3);
+		assert.ok(Math.abs(tree.getMaxInclusiveTime() - 1307029.1) < 0.0001);
+	});
+
+	test('Open Tau Profile', async () => {
+		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+
+		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'tau', 'tau-profile');
+		let profile = new ProfilerOutput(fpath, "tau", true);
+
+		assert.strictEqual(profile.type, "tau");
+		assert.strictEqual(profile.isDirectory, true);
+
+		let tree = await profile.getTree();
+		assert.strictEqual(tree.roots.length, 1);
+		assert.ok(Math.abs(tree.getMaxInclusiveTime() - 53511.75) < 0.0001);
+	});
+
+	test('Open ScoreP Profile', async () => {
+		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+
+		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'scorep', 'scorep.cubex');
+		let profile = new ProfilerOutput(fpath, "scorep", false);
+
+		assert.strictEqual(profile.type, "scorep");
+		assert.strictEqual(profile.isDirectory, false);
+
+		let tree = await profile.getTree();
+		assert.strictEqual(tree.roots.length, 1);
+		assert.ok(Math.abs(tree.getMaxInclusiveTime() - 0) < 0.0001);
+	});
 });
