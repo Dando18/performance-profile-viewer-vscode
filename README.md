@@ -76,3 +76,12 @@ and [Timemory](https://github.com/NERSC/timemory).
 - Flamegraph viewer
 
 
+
+# License
+
+Copyright Daniel Nichols 2023
+
+Performance Profile Viewer is published under the [Apache 2.0 license](/LICENSE).
+The flamegraph view uses [d3-flame-graph](https://github.com/spiermar/d3-flame-graph),
+which is published under the [Apache 2.0 license](https://github.com/spiermar/d3-flame-graph/blob/master/LICENSE).
+[Hatchet](https://github.com/hatchet/hatchet) is published under the [MIT license](https://github.com/hatchet/hatchet/blob/develop/LICENSE).
