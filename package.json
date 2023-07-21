@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Dando18/performance-profile-viewer-vscode.git"
+    "url": "https://github.com/Dando18/performance-profile-viewer-vscode"
   },
   "license": "Apache-2.0",
   "engines": {
     "vscode": "^1.79.0"
   },
   "categories": [
-    "Other"
+    "Visualization"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
