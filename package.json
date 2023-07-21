@@ -60,7 +60,17 @@
           }
         ]
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Performance Profile Viewer",
+      "properties": {
+        "profileviewer.animatedHotPathIcons": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to animate the hot path icons in the flame graph."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
