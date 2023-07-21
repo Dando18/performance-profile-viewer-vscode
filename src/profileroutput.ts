@@ -69,8 +69,26 @@ export class ProfilerOutputNode {
         return new ProfilerOutputNode(obj.name, obj.frame, obj.metrics, obj.attributes, children);
     }
 
+    public getMetricValue(metricName: string): number | undefined {
+        return this.metrics[metricName as keyof typeof this.metrics];
+    }
+
+    public getMaxMetricValue(metricName: string, recursive: boolean = true): number {
+        let maxMetricValue = this.getMetricValue(metricName) || 0;
+        if (recursive) {
+            for (const child of this.children) {
+                maxMetricValue = Math.max(maxMetricValue, child.getMaxMetricValue(metricName, recursive));
+            }
+        }
+        return maxMetricValue;
+    }
+
     public getInclusiveTime(): number | undefined {
-        return this.metrics["time (inc)" as keyof typeof this.metrics];
+        return this.getMetricValue("time (inc)");
+    }
+
+    public getExclusiveTime(): number | undefined {
+        return this.getMetricValue("time");
     }
 
     public getFilename(): string | undefined {
@@ -123,6 +141,24 @@ export class ProfilerOutputNode {
         }
     }
 
+    /**
+     * Returns a list of all available metrics for this node. If recursive is true,
+     * then it will also return all available metrics for all children.
+     */
+    public getAvailableMetrics(recursive: boolean = false): string[] {
+        if (recursive) {
+            const metrics = new Set(Object.keys(this.metrics));
+            for (const child of this.children) {
+                for (const childMetric of child.getAvailableMetrics(recursive)) {
+                    metrics.add(childMetric);
+                }
+            }
+            return Array.from(metrics);
+        } else {
+            return Object.keys(this.metrics);
+        }
+    }
+
     public toString(): string {
         return JSON.stringify(this);
     }
@@ -161,6 +197,14 @@ export class ProfilerOutputTree {
         return JSON.stringify(this);
     }
 
+    public getMaxMetricValue(metric: string, recursive: boolean = true): number {
+        let maxMetricValue = 0;
+        for (const root of this.roots) {
+            maxMetricValue = Math.max(maxMetricValue, root.getMaxMetricValue(metric, recursive));
+        }
+        return maxMetricValue;
+    }
+
     public getMaxInclusiveTime(): number {
         /* no need to recursively check, since max inclusive runtime should be at one of the roots */
         return Math.max(...this.roots.map((root: ProfilerOutputNode) => root.getInclusiveTime() || 0));
@@ -168,6 +212,29 @@ export class ProfilerOutputTree {
 
     public setValueMetric(metricColumn: string, recursive: boolean = true) {
         this.roots.forEach((root: ProfilerOutputNode) => root.setValueMetric(metricColumn, recursive));
+    }
+
+    public getAvailableMetrics(recursive: boolean = false, removePrefix?: string): string[] {
+        let availableMetrics: string[] = [];
+
+        if (this.roots.length === 1) {
+            availableMetrics = this.roots[0].getAvailableMetrics(recursive);
+        } else {
+            const metrics = new Set<string>();
+            for (const root of this.roots) {
+                for (const rootMetric of root.getAvailableMetrics(recursive)) {
+                    metrics.add(rootMetric);
+                }
+            }
+            availableMetrics = Array.from(metrics);
+        }
+
+        /* remove all metrics that start with removePrefix */
+        if (removePrefix && removePrefix.length > 0) {
+            availableMetrics = availableMetrics.filter((metric: string) => !metric.startsWith(removePrefix));
+        }
+
+        return availableMetrics;
     }
 };
 
