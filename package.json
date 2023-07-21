@@ -1,6 +1,7 @@
 {
   "name": "performance-profile-viewer",
   "displayName": "Performance Profile Viewer",
+  "publisher": "danielnichols",
   "description": "View performance profiles of source code.",
   "version": "0.0.1",
   "author": {
