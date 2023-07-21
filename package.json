@@ -1,7 +1,7 @@
 {
-  "name": "profileviewer",
-  "displayName": "ProfileViewer",
-  "description": "View profiles of source code.",
+  "name": "performance-profile-viewer",
+  "displayName": "Performance Profile Viewer",
+  "description": "View performance profiles of source code.",
   "version": "0.0.1",
   "author": {
     "name": "Daniel Nichols",
