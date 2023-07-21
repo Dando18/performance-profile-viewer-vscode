@@ -1,7 +1,7 @@
 {
-  "name": "profileviewer",
-  "displayName": "ProfileViewer",
-  "description": "View profiles of source code.",
+  "name": "performance-profile-viewer",
+  "displayName": "Performance Profile Viewer",
+  "description": "View performance profiles of source code.",
   "version": "0.0.1",
   "author": {
     "name": "Daniel Nichols",
@@ -9,8 +9,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Dando18/profileviewer.git"
+    "url": "https://github.com/Dando18/performance-profile-viewer-vscode.git"
   },
+  "license": "Apache-2.0",
   "engines": {
     "vscode": "^1.79.0"
   },
