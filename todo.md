@@ -20,5 +20,5 @@
 - [x] Load timemory profile: add and test
 - [x] Create tests
 - [x] Create testing CI
-- [ ] Publish
-- [ ] Create publishing CI
+- [x] Publish
+- [x] Create publishing CI
