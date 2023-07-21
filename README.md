@@ -49,7 +49,7 @@ No settings right now.
 
 ### Submitting Issues
 
-Issues can be submitted under the [issues tab on GitHub](/issues).
+Issues can be submitted under the [issues tab on GitHub](https://github.com/Dando18/performance-profile-viewer-vscode/issues).
 
 ## Release Notes
 
