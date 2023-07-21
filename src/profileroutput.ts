@@ -39,6 +39,10 @@ export const PROFILER_OUTPUT_TYPES = {
         name: "CProfile",
         isDirectory: false
     },
+    json: {
+        name: "JSON",
+        isDirectory: false
+    }
 };
 
 /**
@@ -265,7 +269,18 @@ export class ProfilerOutput implements vscode.Disposable {
         return new ProfilerOutput(uri, query.type, profileInfo.isDirectory);
     }
 
+    private getTreeFromJson(): Thenable<ProfilerOutputTree> {
+        const fileUri = vscode.Uri.file(this.uri.fsPath);
+        return vscode.workspace.fs.readFile(fileUri).then((contents: Uint8Array) => {
+            return ProfilerOutputTree.fromString(contents.toString());
+        });
+    }
+
     public getTree(): Thenable<ProfilerOutputTree> {
+        if (this.type === "json") {
+            return this.getTreeFromJson();
+        }
+
         return new Promise<ProfilerOutputTree>((resolve, reject) => {
             getPythonPath().then((pythonPath: string | vscode.Uri) => {
                 const pythonScriptPath = path.join(__dirname, '..', 'src', 'parse_profile.py');

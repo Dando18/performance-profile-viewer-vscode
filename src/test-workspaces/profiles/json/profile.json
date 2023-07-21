@@ -1,0 +1,70 @@
+[
+    {
+    "name": "root",
+    "frame": [],
+    "metrics": {
+        "time": 0,
+        "time (inc)": 0.5
+    },
+    "attributes": {
+        "file": "foo.cpp",
+        "line": 0
+    },
+    "children": [
+        {
+            "name": "main",
+            "frame": [],
+            "metrics": {
+                "time": 0.1,
+                "time (inc)": 0.5
+            },
+            "attributes": {
+                "file": "foo.cpp",
+                "line": 5
+            },
+            "children": [
+                {
+                    "name": "foo",
+                    "frame": [],
+                    "metrics": {
+                        "time": 0.2,
+                        "time (inc)": 0.2
+                    },
+                    "attributes": {
+                        "file": "foo.cpp",
+                        "line": 10
+                    },
+                    "children": []
+                },
+                {
+                    "name": "bar",
+                    "frame": [],
+                    "metrics": {
+                        "time": 0.2,
+                        "time (inc)": 0.3
+                    },
+                    "attributes": {
+                        "file": "foo.cpp",
+                        "line": 25
+                    },
+                    "children": [
+                        {
+                            "name": "baz",
+                            "frame": [],
+                            "metrics": {
+                                "time": 0.1,
+                                "time (inc)": 0.1
+                            },
+                            "attributes": {
+                                "file": "foo.cpp",
+                                "line": 39
+                            },
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+]

@@ -10,7 +10,8 @@ It can open profiles from
 [Caliper](https://software.llnl.gov/Caliper/), 
 [Tau](http://www.cs.uoregon.edu/research/tau/home.php), 
 [Score-P](https://www.vi-hps.org/projects/score-p/), 
-and [Timemory](https://github.com/NERSC/timemory).
+[Timemory](https://github.com/NERSC/timemory),
+and [raw JSON data](/src/test-workspaces/profiles/json/profile.json).
 Currently, it supports a view of the call graph with run times and a flamegraph.
 
 ## Features
@@ -52,6 +53,11 @@ No settings right now.
 Issues can be submitted under the [issues tab on GitHub](https://github.com/Dando18/performance-profile-viewer-vscode/issues).
 
 ## Release Notes
+
+### 0.0.2
+
+- Added show hot path button.
+- Added support to open [raw JSON data](/src/test-workspaces/profiles/json/profile.json).
 
 ### 0.0.1
 
