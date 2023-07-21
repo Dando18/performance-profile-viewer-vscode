@@ -46,6 +46,22 @@
             color: OrangeRed;
         }
 
+        .fancy-hotpath-icon {
+            animation: fire-color-change 3s infinite;
+        }
+
+        @keyframes fire-color-change {
+            0% {
+                color: OrangeRed;
+            }
+            50% {
+                color: Orange;
+            }
+            100% {
+                color: OrangeRed;
+            }
+        }
+
         #settings__container {
             display: flex;
             flex-direction: row;

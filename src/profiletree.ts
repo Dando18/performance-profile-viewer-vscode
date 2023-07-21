@@ -143,13 +143,12 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
         }
     }
 
-    private getHotPathIcon(node: ProfilerOutputNode, isFancy: boolean = true): string {
+    private getHotPathIcon(node: ProfilerOutputNode): string {
         if (!node.isOnHotPath()) {
             return '';
         }
-        if (isFancy) {
-            /* todo -- add animated flame */
-            return '<i class="hotpath-icon codicon codicon-flame"></i>';
+        if (vscode.workspace.getConfiguration("profileviewer").get("animatedHotPathIcons") === true) {
+            return '<i class="hotpath-icon fancy-hotpath-icon codicon codicon-flame"></i>';
         } else {
             return '<i class="hotpath-icon codicon codicon-flame"></i>';
         }
@@ -182,7 +181,7 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
         const nameElem = this.escapeHtml(node.name);
         const metricElem = this.getMetricHtmlElement(node.getMetricValue(metric) || 0, maxMetricValue);
         const filenameElem = this.getFilePathHtmlElement(node.getFilename() || "", resolvedFilename, line);
-        const hotPathElem = this.getHotPathIcon(node, true);
+        const hotPathElem = this.getHotPathIcon(node);
 
         /* each node is a list item */
         let htmlContent = "<li>";
