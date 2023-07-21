@@ -67,7 +67,8 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "deploy": "vsce publish"
   },
   "devDependencies": {
     "@types/vscode": "^1.79.0",
@@ -80,7 +81,8 @@
     "glob": "^8.1.0",
     "mocha": "^10.2.0",
     "typescript": "^5.1.3",
-    "@vscode/test-electron": "^2.3.2"
+    "@vscode/test-electron": "^2.3.2",
+    "@vscode/vsce": "^2.19.0"
   },
   "dependencies": {
     "@vscode/codicons": "^0.0.20"
