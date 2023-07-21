@@ -167,4 +167,18 @@ suite('ProfileViewer Test Suite', () => {
 		assert.strictEqual(tree.roots.length, 1);
 		assert.ok(Math.abs(tree.getMaxMetricValue("max_time (inc)") - 5.0556) < 0.0001);
 	});
+
+	test('Open JSON Profile', async () => {
+		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+
+		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'json', 'profile.json');
+		let profile = new ProfilerOutput(fpath, "json", false);
+
+		assert.strictEqual(profile.type, "json");
+		assert.strictEqual(profile.isDirectory, false);
+
+		let tree = await profile.getTree();
+		assert.strictEqual(tree.roots.length, 1);
+		assert.ok(Math.abs(tree.getMaxMetricValue("time (inc)") - 0.5) < 0.0001);
+	});
 });
