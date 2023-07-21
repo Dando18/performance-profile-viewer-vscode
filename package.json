@@ -11,6 +11,7 @@
     "type": "git",
     "url": "https://github.com/Dando18/profileviewer.git"
   },
+  "license": "Apache-2.0",
   "engines": {
     "vscode": "^1.79.0"
   },
