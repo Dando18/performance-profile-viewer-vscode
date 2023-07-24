@@ -8,7 +8,7 @@
     "name": "Daniel Nichols",
     "url": "https://cs.umd.edu/~dnicho"
   },
-  "icon": "images/icons/ppv-icon.png",
+  "icon": "images/icons/ppv-icon-alt.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/Dando18/performance-profile-viewer-vscode"
