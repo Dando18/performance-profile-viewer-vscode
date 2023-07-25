@@ -3,7 +3,7 @@
   "displayName": "Performance Profile Viewer",
   "publisher": "danielnichols",
   "description": "View performance profiles of source code.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": {
     "name": "Daniel Nichols",
     "url": "https://cs.umd.edu/~dnicho"
