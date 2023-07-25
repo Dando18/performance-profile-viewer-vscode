@@ -283,7 +283,9 @@ export class ProfilerOutput implements vscode.Disposable {
 
         return new Promise<ProfilerOutputTree>((resolve, reject) => {
             getPythonPath().then((pythonPath: string | vscode.Uri) => {
-                const pythonScriptPath = path.join(__dirname, '..', 'src', 'parse_profile.py');
+                const extensionUri = vscode.extensions.getExtension("danielnichols.performance-profile-viewer")!.extensionUri;
+                const pythonScriptUri = vscode.Uri.joinPath(extensionUri, "src", "parse_profile.py");
+                const pythonScriptPath = pythonScriptUri.fsPath;
                 this.process = spawn(`${pythonPath}`, [pythonScriptPath, "--profile", this.uri.fsPath, "--type", this.type, "--hot-path"]);
 
                 // Collect the output from the Python script

@@ -54,6 +54,10 @@ Issues can be submitted under the [issues tab on GitHub](https://github.com/Dand
 
 ## Release Notes
 
+### 0.0.4
+
+- Hotfix for missing Python script
+
 ### 0.0.3
 
 - updated logo
