@@ -54,6 +54,13 @@ Issues can be submitted under the [issues tab on GitHub](https://github.com/Dand
 
 ## Release Notes
 
+### 0.0.3
+
+- updated logo
+- fancy hot path icons
+- added licensing information
+- better error messages
+
 ### 0.0.2
 
 - Added show hot path button.
