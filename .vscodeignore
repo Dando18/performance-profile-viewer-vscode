@@ -9,3 +9,4 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 !src/parse_profile.py
+!src/html/profiletree.html
