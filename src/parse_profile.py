@@ -24,6 +24,19 @@ try:
 except ImportError:
     error(1001, "Hatchet is not installed. Please install it by running \"pip install hatchet\"", True)
 
+# check the hatchet version -- must be >= 1.3.1
+try:
+    hatchet_version_info = ht.version.__version_info__
+    expected_version_info = ("1", "3", "1")
+    for i in range(len(hatchet_version_info)):
+        cur = hatchet_version_info[i]
+        if cur > expected_version_info[i]:
+            break
+        elif cur < expected_version_info[i]:
+            error(1002, f"Hatchet version must be >= 1.3.1. Please upgrade by running \"pip install hatchet --upgrade\"", True)
+except Exception as e:
+    error(1003, f"Unknown error checking hatchet version. {e}\n{traceback.format_exc()}", True)
+
 
 # allow numpy arrays to be serialized to json
 class NpEncoder(json.JSONEncoder):
@@ -117,15 +130,15 @@ def main():
 
     # check that path exists
     if not os.path.exists(args.profile):
-        error(1002, f"Profile path does not exist. {e}\n{traceback.format_exc()}", True)
+        error(1004, f"Profile path does not exist. {e}\n{traceback.format_exc()}", True)
 
     # read the profile
     try:
         gf = read_profile(args.profile, args.type)
     except ValueError as e:
-        error(1003, str(e), True)
+        error(1005, str(e), True)
     except Exception as e:
-        error(1004, f"Unknown error reading in profile. {e}\n{traceback.format_exc()}", True)
+        error(1006, f"Unknown error reading in profile. {e}\n{traceback.format_exc()}", True)
 
     # collapse across ranks
     gf.drop_index_levels()
@@ -139,7 +152,7 @@ def main():
     try:
         tree = get_tree(gf)
     except Exception as e:
-        error(1005, f"Unknown error parsing out tree from profile. {e}\n{traceback.format_exc()}", True)
+        error(1007, f"Unknown error parsing out tree from profile. {e}\n{traceback.format_exc()}", True)
 
     # get the hot path
     if args.hot_path:
