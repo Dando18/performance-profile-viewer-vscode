@@ -13,7 +13,7 @@ It can open profiles from
 [Timemory](https://github.com/NERSC/timemory),
 and [raw JSON data](/src/test-workspaces/profiles/json/profile.json).
 Currently, it supports a view of the call graph with run times and a flamegraph.
-***NOTE:***___*** This extension requires the Python package hatchet to be installed.
+***NOTE:*** This extension requires the Python package hatchet to be installed.
 See [Requirements](#requirements) for more info.
 
 ## Features
