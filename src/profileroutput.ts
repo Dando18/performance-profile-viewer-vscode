@@ -271,6 +271,10 @@ export class ProfilerOutput implements vscode.Disposable {
         return new ProfilerOutput(uri, query.type, profileInfo.isDirectory);
     }
 
+    public setContext(context: vscode.ExtensionContext) {
+        this.context = context;
+    }
+
     private getTreeFromJson(): Thenable<ProfilerOutputTree> {
         const fileUri = vscode.Uri.file(this.uri.fsPath);
         return vscode.workspace.fs.readFile(fileUri).then((contents: Uint8Array) => {

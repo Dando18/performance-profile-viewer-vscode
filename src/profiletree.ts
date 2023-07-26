@@ -74,6 +74,7 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
         webviewPanel.webview.onDidReceiveMessage((msg) => this.onDidReceiveMessage(msg, webviewPanel, document), undefined, this.context.subscriptions);
 
         // Set the webview's initial html content
+        document.profilerOutput.setContext(this.context);
         document.getContents().then(async (tree: ProfilerOutputTree) => {
             webviewPanel.webview.html = await this.getHtmlForWebview(tree, webviewPanel.webview, "time (inc)");
         }, (reason: any) => {
