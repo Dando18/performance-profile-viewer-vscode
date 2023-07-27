@@ -70,8 +70,8 @@
           "description": "Whether to animate the hot path icons in the flame graph."
         },
         "profileviewer.pythonPath": {
-          "type": "string",
-          "format": "path",
+          "type": ["string", "null"],
+          "default": null,
           "scope": "machine-overridable",
           "description": "The path to the Python executable used to run the internal Python files. Should have hatchet installed."
         }

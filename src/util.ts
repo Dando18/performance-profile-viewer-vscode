@@ -27,7 +27,8 @@ function doesPythonHaveModules(pythonPath: string, modules: string[]): boolean {
  */
 export async function getPythonPath(imports?: string[]): Promise<string | vscode.Uri> {
 
-    if (vscode.workspace.getConfiguration("profileviewer").has("pythonPath")) {
+    // check if the pythonPath setting is set
+    if (vscode.workspace.getConfiguration("profileviewer").get("pythonPath")) {
         return vscode.workspace.getConfiguration("profileviewer").get("pythonPath")!;
     }
 
