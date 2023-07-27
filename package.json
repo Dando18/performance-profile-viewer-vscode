@@ -31,10 +31,16 @@
         "icon": "$(add)"
       },
       {
+        "command": "profileviewer.openProfileTree",
+        "title": "Open Profile Tree",
+        "category": "Profile",
+        "icon": "$(graph)"
+      },
+      {
         "command": "profileviewer.openFlameGraph",
         "title": "Open Flame Graph",
         "category": "Profile",
-        "icon": "$(graph)"
+        "icon": "$(flame)"
       }
     ],
     "customEditors": [

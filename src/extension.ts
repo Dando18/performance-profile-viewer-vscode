@@ -67,6 +67,14 @@ export function activate(context: vscode.ExtensionContext) {
 	let openProfileCommand = vscode.commands.registerCommand('profileviewer.openProfile', () => openProfile(["profileTree", "profileFlameGraph"]));
 	context.subscriptions.push(openProfileCommand);
 
+	/* register command to open profile in tree editor */
+	let openProfileTreeCommand = vscode.commands.registerCommand('profileviewer.openProfileTree', () => openProfile(["profileTree"]));
+	context.subscriptions.push(openProfileTreeCommand);
+
+	/* register command to open profile in flame graph editor */
+	let openProfileFlameGraphCommand = vscode.commands.registerCommand('profileviewer.openFlameGraph', () => openProfile(["profileFlameGraph"]));
+	context.subscriptions.push(openProfileFlameGraphCommand);
+
 }
 
 export function deactivate() {}
