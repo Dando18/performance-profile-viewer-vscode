@@ -16,7 +16,8 @@ function doesPythonHaveModules(pythonPath: string, modules: string[]): boolean {
 }
 
 /** A helper function to find the correct python to use in the shell.
- * First checks if the Python extension is installed, and if so, uses the
+ * First checks if path is set in settings.
+ * Then checks if the Python extension is installed, and if so, uses the
  * python.interpreterPath. 
  * If not, it checks the python.pythonPath setting.
  * Then it checks it Python3_ROOT_DIR environment variable is set.
@@ -25,6 +26,10 @@ function doesPythonHaveModules(pythonPath: string, modules: string[]): boolean {
  * @returns the path to the python executable
  */
 export async function getPythonPath(imports?: string[]): Promise<string | vscode.Uri> {
+
+    if (vscode.workspace.getConfiguration("profileviewer").has("pythonPath")) {
+        return vscode.workspace.getConfiguration("profileviewer").get("pythonPath")!;
+    }
 
     // check if the Python extension is installed
     const pythonExtension = vscode.extensions.getExtension("ms-python.python");

@@ -71,6 +71,8 @@
         },
         "profileviewer.pythonPath": {
           "type": "string",
+          "format": "path",
+          "scope": "machine-overridable",
           "description": "The path to the Python executable used to run the internal Python files. Should have hatchet installed."
         }
       }
