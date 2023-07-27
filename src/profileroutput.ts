@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { spawn, ChildProcess } from 'child_process';
-import { getPythonPath } from './util';
+import { getPythonPath, findPythonWithCache } from './util';
 
 /**
  * Types of supported profiler outputs and their properties.
@@ -254,19 +254,25 @@ export class ProfilerOutput implements vscode.Disposable {
     public readonly uri: vscode.Uri;
     public readonly type: string;
     public readonly isDirectory: boolean;
+    private context: vscode.ExtensionContext | undefined; /* optionally get info from context */
 
     private process: ChildProcess | undefined;
 
-    constructor(uri: vscode.Uri, type: string, isDirectory: boolean) {
+    constructor(uri: vscode.Uri, type: string, isDirectory: boolean, context?: vscode.ExtensionContext) {
         this.uri = uri;
         this.type = type;
         this.isDirectory = isDirectory;
+        this.context = context;
     }
 
     public static fromUri(uri: vscode.Uri): ProfilerOutput {
         const query = JSON.parse(uri.query);
         const profileInfo = PROFILER_OUTPUT_TYPES[query.type as keyof typeof PROFILER_OUTPUT_TYPES];
         return new ProfilerOutput(uri, query.type, profileInfo.isDirectory);
+    }
+
+    public setContext(context: vscode.ExtensionContext) {
+        this.context = context;
     }
 
     private getTreeFromJson(): Thenable<ProfilerOutputTree> {
@@ -282,8 +288,17 @@ export class ProfilerOutput implements vscode.Disposable {
         }
 
         return new Promise<ProfilerOutputTree>((resolve, reject) => {
-            getPythonPath().then((pythonPath: string | vscode.Uri) => {
-                const extensionUri = vscode.extensions.getExtension("danielnichols.performance-profile-viewer")!.extensionUri;
+            let pythonPathPromise = (this.context) ? findPythonWithCache(this.context, ["hatchet"], true) : getPythonPath();
+
+            pythonPathPromise.then((pythonPath) => {
+
+                let extensionUri: vscode.Uri;
+                if (this.context) {
+                    extensionUri = this.context.extensionUri;
+                } else {
+                    extensionUri = vscode.extensions.getExtension("danielnichols.performance-profile-viewer")!.extensionUri;
+                }
+
                 const pythonScriptUri = vscode.Uri.joinPath(extensionUri, "src", "parse_profile.py");
                 const pythonScriptPath = pythonScriptUri.fsPath;
                 this.process = spawn(`${pythonPath}`, [pythonScriptPath, "--profile", this.uri.fsPath, "--type", this.type, "--hot-path"]);

@@ -74,10 +74,12 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
         webviewPanel.webview.onDidReceiveMessage((msg) => this.onDidReceiveMessage(msg, webviewPanel, document), undefined, this.context.subscriptions);
 
         // Set the webview's initial html content
+        document.profilerOutput.setContext(this.context);
         document.getContents().then(async (tree: ProfilerOutputTree) => {
             webviewPanel.webview.html = await this.getHtmlForWebview(tree, webviewPanel.webview, "time (inc)");
         }, (reason: any) => {
             if (reason.code && reason.code === "1001") {
+                this.context.workspaceState.update("pythonWithHatchetPath", undefined);
                 vscode.window.showErrorMessage(`Could not find Hatchet install. Run 'pip install hatchet' in your python environment.\nError parsing profile: ${reason.message}.`);
             } else {
                 vscode.window.showErrorMessage(`Error parsing profile: ${reason.message}`);

@@ -67,3 +67,22 @@ export async function getPythonPath(imports?: string[]): Promise<string | vscode
 
     return "python";
 }
+
+export async function findPythonWithCache(context: vscode.ExtensionContext, imports?: string[], useCached: boolean = true): Promise<string | undefined> {
+	if (useCached) {
+		const cachedPython = context.workspaceState.get<string>("pythonWithHatchetPath");
+		if (cachedPython) {
+			return cachedPython;
+		}
+	}
+	return getPythonPath(imports).then((pythonPath: string | vscode.Uri) => {
+		if (pythonPath instanceof vscode.Uri) {
+			pythonPath = pythonPath.fsPath;
+		}
+
+		if (pythonPath) {
+			context.workspaceState.update("pythonWithHatchetPath", pythonPath);
+		}
+		return pythonPath;
+	});
+}

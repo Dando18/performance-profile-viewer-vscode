@@ -50,12 +50,18 @@ export class FlameGraphView implements vscode.CustomReadonlyEditorProvider {
 
         webviewPanel.webview.onDidReceiveMessage(this.onDidReceiveMessage, undefined, this.context.subscriptions);
         
+        document.profilerOutput.setContext(this.context);
         document.getContents().then((tree: ProfilerOutputTree) => {
             let parentTree = tree.getTreeWithSingleRoot();
             parentTree.setValueMetric("time (inc)", true);
             webviewPanel.webview.html = this.getHtmlForWebview(parentTree);
         }, (reason: any) => {
-            vscode.window.showErrorMessage(`Error parsing profile: ${reason.message}`);
+            if (reason.code && reason.code === "1001") {
+                this.context.workspaceState.update("pythonWithHatchetPath", undefined);
+                vscode.window.showErrorMessage(`Could not find Hatchet install. Run 'pip install hatchet' in your python environment.\nError parsing profile: ${reason.message}.`);
+            } else {
+                vscode.window.showErrorMessage(`Error parsing profile: ${reason.message}`);
+            }
         });
     }
 
