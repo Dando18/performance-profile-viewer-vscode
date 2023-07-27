@@ -46,7 +46,8 @@ Assuming there is a valid Python installation, then it can be installed with
 
 ## Extension Settings
 
-No settings right now.
+- `profileviewer.animatedHotPathIcons` [_boolean_] (default: `false`) -- animate the icons that display the hot path along the tree
+- `profileviewer.pythonPath` [_string_] -- manually provide the path to the Python executable that has hatchet installed; otherwise the extension will try to find it automatically
 
 ## Known Issues
 
