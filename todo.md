@@ -32,16 +32,12 @@
 - [ ] Add visualization for flat profiles
 - [ ] Add visualization for traces (with pipit?)
 - [ ] Replace hatchet for some readers that are already natively JSON (i.e. PyInstrument)
-- [ ] Create separate command for opening tree view
+- [x] Create separate command for opening tree view
 
 
 # Roadmap
 
 - 0.1.0: Clean up existing features/views
-  - consolidate commands for opening views
-  - add settings for things
-  - see if data can be persisted between editors
-  - better solution for finding/caching path to python with hatchet installed
 - 0.2.0: Add commands/tasks for launching different profilers
 - 0.3.0: Add TS readers for things that can be trivially read without hatchet
 - 0.4.0: Add flat profile viewers (and CPU/mem usage)
