@@ -7,51 +7,68 @@ import * as vscode from 'vscode';
 import { ProfilerOutput } from '../../profileroutput';
 import { ProfileTreeEditor } from '../../profiletree';
 import { FlameGraphView } from '../../flamegraph';
-import { getPythonPath } from '../../util';
+import { getPythonPath, findPythonWithCache } from '../../util';
 
-suite('ProfileViewer Test Suite', () => {
-	vscode.window.showInformationMessage('Start all tests.');
+/* 	test that the external python environment is set up with hatchet.
+	test that all the tools to find and interact with this environment work.
+*/
+suite('Environment Tests', () => {
+	vscode.window.showInformationMessage('Starting environment tests.');
+
+	let extension: vscode.Extension<any>;
+	let extensionContext: vscode.ExtensionContext;
+	suiteSetup(async () => {
+		extension = vscode.extensions.getExtension('danielnichols.performance-profile-viewer')!;
+		await extension?.activate();
+		extensionContext = (global as any).testExtensionContext;
+	});
 
 	test('Sample test', () => {
 		assert.strictEqual(-1, [1, 2, 3].indexOf(5));
 		assert.strictEqual(-1, [1, 2, 3].indexOf(0));
 	});
 
-	test('Run External Python', async () => {
+	test('Extension is present', () => {
+		assert.ok(extension);
+	});
+
+	test('Extension is active', async () => {
+		assert.strictEqual(extension.isActive, true);
+	});
+
+	test('Find external Python', async () => {
+		const pythonPath = await getPythonPath();
+		assert.ok(pythonPath);
+	});
+
+	test('Run external Python', async () => {
 		const pythonPath = await getPythonPath();
 		assert.doesNotThrow(() => {
 			execSync(`${pythonPath} --version`);
 		});
 	});
 
-	test('Open Tree View', async () => {
-		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
-
-		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'pyinstrument', 'pyinstrument.json');
-		const profileUri = vscode.Uri.from({
-			scheme: "profileTree",
-			path: fpath.fsPath,
-			query: JSON.stringify({type: "pyinstrument"})
-		});	
-
-		assert.doesNotThrow(async () => {
-			await vscode.commands.executeCommand('vscode.openWith', profileUri, ProfileTreeEditor.viewType, vscode.ViewColumn.One);
-		});
+	test('Find external Python with hatchet and numpy', async () => {
+		const pythonPath = await getPythonPath(["hatchet", "numpy"]);
+		assert.ok(pythonPath);
 	});
 
-	test('Open FlameGraph View', async () => {
-		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+	test('External Python is cached', async () => {
+		const pythonPath = await findPythonWithCache(extensionContext, ["hatchet", "numpy"], true);
+		assert.ok(pythonPath);
 
-		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'pyinstrument', 'pyinstrument.json');
-		const profileUri = vscode.Uri.from({
-			scheme: "profileFlameGraph",
-			path: fpath.fsPath,
-			query: JSON.stringify({type: "pyinstrument"})
-		});	
+		assert.ok(extensionContext.workspaceState.get<string>("pythonWithHatchetPath"));
+		assert.strictEqual(extensionContext.workspaceState.get<string>("pythonWithHatchetPath"), pythonPath);
+	});
+});
 
-		assert.doesNotThrow(async () => {
-			await vscode.commands.executeCommand('vscode.openWith', profileUri, FlameGraphView.viewType, vscode.ViewColumn.One);
-		});
+/* test that the ProfilerOutput class works for all profile types */
+suite('Profile Parsing Tests', () => {
+	vscode.window.showInformationMessage('Starting profile parsing tests.');
+
+	test('Sample test', () => {
+		assert.strictEqual(-1, [1, 2, 3].indexOf(5));
+		assert.strictEqual(-1, [1, 2, 3].indexOf(0));
 	});
 
 	test('Open PyInstrument Profile', async () => {
@@ -181,4 +198,46 @@ suite('ProfileViewer Test Suite', () => {
 		assert.strictEqual(tree.roots.length, 1);
 		assert.ok(Math.abs(tree.getMaxMetricValue("time (inc)") - 0.5) < 0.0001);
 	});
+
+});
+
+suite('UI Tests', () => {
+	vscode.window.showInformationMessage('Start UI tests.');
+
+	test('Sample test', () => {
+		assert.strictEqual(-1, [1, 2, 3].indexOf(5));
+		assert.strictEqual(-1, [1, 2, 3].indexOf(0));
+	});
+
+	test('Open Tree View', async () => {
+		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+
+		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'caliper', 'caliper.json');
+		const profileUri = vscode.Uri.from({
+			scheme: "profileTree",
+			path: fpath.fsPath,
+			query: JSON.stringify({type: "caliper"})
+		});	
+
+		assert.doesNotThrow(async () => {
+			await vscode.commands.executeCommand('vscode.openWith', profileUri, ProfileTreeEditor.viewType, vscode.ViewColumn.One);
+		});
+	});
+
+	test('Open FlameGraph View', async () => {
+		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+
+		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'caliper', 'caliper.json');
+		const profileUri = vscode.Uri.from({
+			scheme: "profileFlameGraph",
+			path: fpath.fsPath,
+			query: JSON.stringify({type: "caliper"})
+		});	
+
+		assert.doesNotThrow(async () => {
+			await vscode.commands.executeCommand('vscode.openWith', profileUri, FlameGraphView.viewType, vscode.ViewColumn.One);
+		});
+	});
+
+	
 });
