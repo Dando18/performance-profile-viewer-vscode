@@ -57,6 +57,13 @@ Issues can be submitted under the [issues tab on GitHub](https://github.com/Dand
 
 ## Release Notes
 
+### 0.1.0
+
+- separate commands for opening tree, flamegraph, and both
+- added setting to manually specify Python and hatchet path
+- better error checking for Python and hatchet versions in environment
+- cache environment information, so it's faster to open profiles
+
 ### 0.0.5
 
 - Hotfix for missing HTML file
