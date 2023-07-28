@@ -75,6 +75,8 @@ export function activate(context: vscode.ExtensionContext) {
 	let openProfileFlameGraphCommand = vscode.commands.registerCommand('profileviewer.openFlameGraph', () => openProfile(["profileFlameGraph"]));
 	context.subscriptions.push(openProfileFlameGraphCommand);
 
+	// Set context as a global as some tests depend on it
+    (global as any).testExtensionContext = context;
 }
 
 export function deactivate() {}
