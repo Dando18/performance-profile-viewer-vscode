@@ -18,6 +18,8 @@ See [Requirements](#requirements) for more info.
 
 ## Features
 
+### Viewing Performance Profiles
+
 Open profiles using the command `Profile: Open Profile` (CTRL+SHIFT+P or 
 CMD+SHIFT+P to start commands).
 You will be asked for the type of profile and path to the profile.
@@ -32,6 +34,24 @@ to the corresponding source code locations.
 ![Exploring Tree View](images/exploring-tree.gif)
 
 ![Exploring FlameGraph View](images/exploring-flamegraph.gif)
+
+### Collecting Profiling Data
+
+Launching the different profilers for your programs is provided through VSCode 
+tasks.
+For instance, define tasks in your `tasks.json` similar to the PyInstrument 
+example below to set up profiler launching directly in VSCode.
+
+```json
+{
+    "type": "PyInstrument",
+    "program": "main.py",
+    "args": [
+        "--foo"
+    ],
+    "outputPath": "${workspaceFolder}/profile.json"
+}
+```
 
 ## Requirements
 
