@@ -8,7 +8,6 @@ interface PyInstrumentTaskDefinition extends vscode.TaskDefinition {
     program: string;
     args?: string[];
     outputFile?: string;
-    openOutputFile?: boolean;
     renderer?: string;
 }
 
@@ -16,8 +15,6 @@ interface PyInstrumentTaskDefinition extends vscode.TaskDefinition {
  * A Profiler implementation for PyInstrument.
  */
 export class PyInstrumentProfiler extends Profiler {
-
-    protected readonly renderer: string = "json";
 
     constructor() {
         super("PyInstrument", "pyinstrument", false);
