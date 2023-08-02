@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { PROFILER_OUTPUT_TYPES } from './profileroutput';
 import { ProfileTreeEditor } from './profiletree';
 import { FlameGraphView } from './flamegraph';
+import { ProfilerTaskProvider } from './profilertasks';
 
 
 const SCHEME_TO_VIEW_TYPE: {[key: string]: string} = {
@@ -77,6 +78,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Set context as a global as some tests depend on it
     (global as any).testExtensionContext = context;
+
+	/* register task provider */
+	const pyinstrumentTaskProvider = new ProfilerTaskProvider("PyInstrument", "PyInstrument");
+	vscode.tasks.registerTaskProvider(pyinstrumentTaskProvider.taskType, pyinstrumentTaskProvider);
 }
 
 export function deactivate() {}

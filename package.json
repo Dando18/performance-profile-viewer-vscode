@@ -82,7 +82,45 @@
           "description": "The path to the Python executable used to run the internal Python files. Should have hatchet installed."
         }
       }
-    }
+    },
+    "taskDefinitions": [
+      {
+        "type": "PyInstrument",
+        "required": [
+          "program"
+        ],
+        "when": "shellExecutionSupported",
+        "properties": {
+          "program": {
+            "type": "string",
+            "description": "The program file to run."
+          },
+          "args": {
+            "type": "array",
+            "description": "The arguments to pass to the executable."
+          },
+          "outputFile": {
+            "type": "string",
+            "description": "The file to write the profile to."
+          },
+          "renderer": {
+            "type": "string",
+            "description": "The renderer to use to visualize the profile.",
+            "enum": [
+              "json",
+              "html",
+              "text",
+              "speedscope"
+            ],
+            "default": "json"
+          },
+          "openOutputFile": {
+            "type": "boolean",
+            "description": "Whether to open the output file after profiling."
+          }
+        }
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
