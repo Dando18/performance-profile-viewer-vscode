@@ -36,7 +36,7 @@ export const PROFILER_OUTPUT_TYPES = {
         isDirectory: false
     },
     cprofile: {
-        name: "CProfile",
+        name: "cProfile",
         isDirectory: false
     },
     json: {

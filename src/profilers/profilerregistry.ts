@@ -1,5 +1,6 @@
 import { Profiler } from './profiler';
 import { PyInstrumentProfiler } from './pyinstrument';
+import { CProfileProfiler } from './cprofile';
 
 /* create a registry for ids to profile classes */
 interface ProfilerConstructor {
@@ -22,3 +23,4 @@ export function profilerFactory(id: string): Profiler {
 
 /* register profilers */
 register("PyInstrument", PyInstrumentProfiler);
+register("cProfile", CProfileProfiler);

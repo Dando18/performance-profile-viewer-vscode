@@ -82,6 +82,9 @@ export function activate(context: vscode.ExtensionContext) {
 	/* register task provider */
 	const pyinstrumentTaskProvider = new ProfilerTaskProvider("PyInstrument", "PyInstrument");
 	vscode.tasks.registerTaskProvider(pyinstrumentTaskProvider.taskType, pyinstrumentTaskProvider);
+
+	const cProfileTaskProvider = new ProfilerTaskProvider("cProfile", "cProfile");
+	vscode.tasks.registerTaskProvider(cProfileTaskProvider.taskType, cProfileTaskProvider);
 }
 
 export function deactivate() {}
