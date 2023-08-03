@@ -1,3 +1,4 @@
+import * as path from 'path';
 import * as vscode from 'vscode';
 import { Profiler } from './profiler';
 
@@ -58,6 +59,11 @@ export class HPCToolkitProfiler extends Profiler {
     public getCommandLine(_task: vscode.TaskDefinition): string {
         const task = _task as HPCToolkitTaskDefinition;
 
+        /* todo -- use mkstemp and store temp files in the tmp dir */
+
+        const programBasename = path.basename(task.program);
+        const hpcstructCmd = `hpcstruct -o ${programBasename}.hpcstruct ${task.program}`;
+
         let hpcrunCmdStr = "";
         if (task.useMPI) {
             const ranks = task.mpiRanks || 1;
@@ -73,9 +79,14 @@ export class HPCToolkitProfiler extends Profiler {
         hpcrunCmdStr += (task.args) ? ` ${task.args.join(" ")} ` : "";
 
         if (!task.createDatabase) {
-            return hpcrunCmdStr;
+            return [hpcstructCmd, hpcrunCmdStr].join(" && ");
         }
 
-        return hpcrunCmdStr;
+        let hpcprofCmd = "hpcprof -S ${programBasename}.hpcstruct ";
+        hpcprofCmd += (task.metricDB) ? "--metric-db yes " : "";
+        hpcprofCmd += (task.outputDirectory) ? `-o ${task.outputDirectory} ` : "";
+        hpcprofCmd += task.measurementsDirectory;
+
+        return [hpcstructCmd, hpcrunCmdStr, hpcprofCmd].join(" && ");
     }   
 }
