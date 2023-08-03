@@ -85,6 +85,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const cProfileTaskProvider = new ProfilerTaskProvider("cProfile", "cProfile");
 	vscode.tasks.registerTaskProvider(cProfileTaskProvider.taskType, cProfileTaskProvider);
+
+	const hpctoolkitTaskProvider = new ProfilerTaskProvider("HPCToolkit", "HPCToolkit");
+	vscode.tasks.registerTaskProvider(hpctoolkitTaskProvider.taskType, hpctoolkitTaskProvider);
 }
 
 export function deactivate() {}

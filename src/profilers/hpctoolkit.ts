@@ -82,7 +82,7 @@ export class HPCToolkitProfiler extends Profiler {
             return [hpcstructCmd, hpcrunCmdStr].join(" && ");
         }
 
-        let hpcprofCmd = "hpcprof -S ${programBasename}.hpcstruct ";
+        let hpcprofCmd = `hpcprof -S ${programBasename}.hpcstruct `;
         hpcprofCmd += (task.metricDB) ? "--metric-db yes " : "";
         hpcprofCmd += (task.outputDirectory) ? `-o ${task.outputDirectory} ` : "";
         hpcprofCmd += task.measurementsDirectory;

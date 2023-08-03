@@ -141,6 +141,70 @@
             "default": "python"
           }
         }
+      },
+      {
+        "type": "HPCToolkit",
+        "required": [
+          "program",
+          "measurementsDirectory"
+        ],
+        "when": "shellExecutionSupported",
+        "properties": {
+          "program": {
+            "type": "string",
+            "description": "The program file to run."
+          },
+          "measurementsDirectory": {
+            "type": "string",
+            "description": "The directory to write the measurements to."
+          },
+          "outputDirectory": {
+            "type": "string",
+            "description": "The directory to write the output to."
+          },
+          "args": {
+            "type": "array",
+            "description": "The arguments to pass to the executable."
+          },
+          "metrics": {
+            "type": "array",
+            "description": "The metrics to measure."
+          },
+          "createDatabase": {
+            "type": "boolean",
+            "description": "Whether to create a database from the measurements.",
+            "default": true
+          },
+          "metricDB": {
+            "type": "boolean",
+            "description": "Whether to create a metric database from the measurements.",
+            "default": true
+          },
+          "howOften": {
+            "type": "number",
+            "description": "Measurement frequency"
+          },
+          "trace": {
+            "type": "boolean",
+            "description": "Whether to trace the program.",
+            "default": false
+          },
+          "useMPI": {
+            "type": "boolean",
+            "description": "Whether to use MPI.",
+            "default": false
+          },
+          "mpiCmd": {
+            "type": "string",
+            "description": "The MPI command to use if using MPI.",
+            "default": "mpirun"
+          },
+          "mpiRanks": {
+            "type": "number",
+            "description": "The number of MPI ranks to use if using MPI.",
+            "default": 1
+          }
+        }
       }
     ]
   },
