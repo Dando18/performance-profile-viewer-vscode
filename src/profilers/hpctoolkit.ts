@@ -17,7 +17,7 @@ interface HPCToolkitTaskDefinition extends vscode.TaskDefinition {
     useMPI?: boolean;
     mpiCmd?: string;
     mpiRanks?: number;
-    metricDB?: string;
+    metricDB?: boolean;
 }
 
 /**
