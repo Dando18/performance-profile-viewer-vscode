@@ -24,7 +24,7 @@ HPCToolkit.
 ### PyInstrument Task
 
 Task definition:
-```json
+```json5
 {
     "type": "PyInstrument", // PyInstrument task
     "program": "...",       // Python program to execute
@@ -46,7 +46,7 @@ Example:
 ### cProfile Task
 
 Task definition:
-```json
+```json5
 {
     "type": "cProfile",     // cProfile task
     "program": "...",       // Python program to execute
@@ -68,7 +68,7 @@ Example:
 ### HPCToolkit Task
 
 Task definition:
-```json
+```json5
 {
     "type": "HPCToolkit",           // HPCToolkit task
     "program": "...",               // executable to profile
