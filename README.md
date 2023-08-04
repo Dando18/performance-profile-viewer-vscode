@@ -41,6 +41,7 @@ Launching the different profilers for your programs is provided through VSCode
 tasks.
 For instance, define tasks in your `tasks.json` similar to the PyInstrument 
 example below to set up profiler launching directly in VSCode.
+See the [Profiling Documentation](docs/profiling.md) for more details.
 
 ```json
 {
