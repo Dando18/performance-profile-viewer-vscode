@@ -15,6 +15,10 @@
         "fpath",
         "gprof",
         "hotpath",
+        "hpcrun",
+        "hpcstruct",
+        "mkstemp",
+        "mpirun",
         "scorep",
         "spotdb",
         "timemory"
