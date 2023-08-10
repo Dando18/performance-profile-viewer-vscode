@@ -1,7 +1,7 @@
 # Performance Profile Viewer
 
-Performance Profile Viewer is an extension for viewing performance profiles 
-directly in VSCode. 
+Performance Profile Viewer is an extension for collecting and viewing
+performance profiles directly in VSCode. 
 It can open profiles from 
 [GProf](https://ftp.gnu.org/old-gnu/Manuals/gprof-2.9.1/html_mono/gprof.html), 
 [PyInstrument](https://pyinstrument.readthedocs.io/en/latest/), 
@@ -77,6 +77,11 @@ Assuming there is a valid Python installation, then it can be installed with
 Issues can be submitted under the [issues tab on GitHub](https://github.com/Dando18/performance-profile-viewer-vscode/issues).
 
 ## Release Notes
+
+### 0.1.1
+
+- add task definitions to run PyInstrument, cProfile, and HPCToolkit
+- added [documentation for tasks](docs/profiling.md)
 
 ### 0.1.0
 
