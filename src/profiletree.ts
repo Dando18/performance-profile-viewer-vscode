@@ -118,6 +118,7 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
                     const exportData = tree.toString();
                     vscode.window.showSaveDialog({
                         filters: {
+                            // eslint-disable-next-line @typescript-eslint/naming-convention
                             'JSON': ['json']
                         },
                         saveLabel: "Export Profile Data",
