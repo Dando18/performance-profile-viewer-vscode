@@ -112,6 +112,23 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
                     webviewPanel.webview.html = await this.getHtmlForWebview(tree, webviewPanel.webview, newMetric);
                 });
                 break;
+            case 'exportData':
+                document.getContents().then(async (tree: ProfilerOutputTree) => {
+                    /* prompt user for filename and write out tree data */
+                    const exportData = tree.toString();
+                    vscode.window.showSaveDialog({
+                        filters: {
+                            'JSON': ['json']
+                        },
+                        saveLabel: "Export Profile Data",
+                        title: "Export Profile Data",
+                    }).then((uri: vscode.Uri | undefined) => {
+                        if (uri) {
+                            vscode.workspace.fs.writeFile(uri, Buffer.from(exportData));
+                        }
+                    });
+                });
+                break;
         }
     }
 
