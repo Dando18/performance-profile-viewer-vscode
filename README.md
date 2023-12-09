@@ -78,6 +78,11 @@ Issues can be submitted under the [issues tab on GitHub](https://github.com/Dand
 
 ## Release Notes
 
+### 0.1.2
+
+- add export and import
+- clean up documentation
+
 ### 0.1.1
 
 - add task definitions to run PyInstrument, cProfile, and HPCToolkit
@@ -121,8 +126,9 @@ Initial release.
 [HPCToolkit](http://hpctoolkit.org/), 
 [Caliper](https://software.llnl.gov/Caliper/), 
 [Tau](http://www.cs.uoregon.edu/research/tau/home.php), 
-[Score-P](https://www.vi-hps.org/projects/score-p/), 
-and [Timemory](https://github.com/NERSC/timemory).
+[Score-P](https://www.vi-hps.org/projects/score-p/),
+[Timemory](https://github.com/NERSC/timemory),
+and raw JSON data.
 - Call tree viewer
 - Flamegraph viewer
 
