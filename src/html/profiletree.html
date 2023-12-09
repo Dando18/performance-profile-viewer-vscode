@@ -116,6 +116,9 @@
             <label><b>Metric: </b></label>
             <select class="selection" id="metric__selection" onchange="changeMetric()">{{ availableMetrics }}</select>
         </div>
+        <div id="settings__export-btn">
+            <input type="button" class="btn" id="export-btn" value="Export" onclick="exportData()">
+        </div>
     </div>
 
     <div>{{ data }}</div>
@@ -188,6 +191,12 @@
             vscode.postMessage({
                 command: 'changeMetric',
                 metric: metric
+            });
+        }
+
+        function exportData() {
+            vscode.postMessage({
+                command: 'exportData'
             });
         }
     </script>

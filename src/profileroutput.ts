@@ -189,6 +189,9 @@ export class ProfilerOutputTree {
     }
 
     public static fromObject(obj: any): ProfilerOutputTree {
+        if (obj.hasOwnProperty("roots")) {
+            obj = obj.roots;
+        }
         const roots = obj.map((node: any) => ProfilerOutputNode.fromObject(node));
         return new ProfilerOutputTree(roots);
     }
