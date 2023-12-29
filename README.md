@@ -1,4 +1,11 @@
-# Performance Profile Viewer
+<p align="center"><img align="center" width="64" src="./images/icons/ppv-icon-alt.png"/></p>
+<h1 align="center">Performance Profile Viewer</h1>
+
+
+<b>An extension for collecting and viewing performance profiles directly in VSCode.</b>
+
+[![Visual Studio Code](https://img.shields.io/badge/--007ACC?logo=visual%20studio%20code&logoColor=ffffff)](https://marketplace.visualstudio.com/items?itemName=danielnichols.performance-profile-viewer)&nbsp;[![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/danielnichols.performance-profile-viewer)](https://marketplace.visualstudio.com/items?itemName=danielnichols.performance-profile-viewer)&nbsp;[![GitHub release (with filter)](https://img.shields.io/github/v/release/Dando18/performance-profile-viewer-vscode)](https://github.com/Dando18/performance-profile-viewer-vscode/releases)&nbsp;[![GitHub license](https://badgen.net/github/license/Dando18/performance-profile-viewer-vscode)](https://github.com/Dando18/performance-profile-viewer-vscode/blob/develop/LICENSE)&nbsp;[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Dando18/performance-profile-viewer-vscode/.github%2Fworkflows%2Fci.yaml?logo=github&label=ci)](https://github.com/Dando18/performance-profile-viewer-vscode/actions/workflows/ci.yaml)
+
 
 Performance Profile Viewer is an extension for collecting and viewing
 performance profiles directly in VSCode. 
