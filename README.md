@@ -63,10 +63,10 @@ Performance Profile Viewer uses the Python library
 [Hatchet](https://hatchet.readthedocs.io/en/latest/)
 to parse and process the different profile types.
 You must install it in order to use the extension.
-Currently, the extension has been tested with Hatchet version 1.3.1
+Currently, the extension has been tested with Hatchet version 1.3.1 to 1.4.0
 and Python 3.7 to 3.11.
 Assuming there is a valid Python installation, then it can be installed with
-`pip install hatchet==1.3.1`.
+`pip install hatchet==1.4.0`.
 
 ## Extension Settings
 
@@ -137,7 +137,7 @@ Initial release.
 
 # License
 
-Copyright Daniel Nichols 2023
+Copyright Daniel Nichols 2024
 
 Performance Profile Viewer is published under the [Apache 2.0 license](/LICENSE).
 The flamegraph view uses [d3-flame-graph](https://github.com/spiermar/d3-flame-graph),
