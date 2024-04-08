@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import { ProfilerOutput } from '../../profileroutput';
 import { ProfileTreeEditor } from '../../profiletree';
 import { FlameGraphView } from '../../flamegraph';
-import { getPythonPath, findPythonWithCache } from '../../util';
+import { getPythonPath, findPythonWithCache, getHatchetVersion } from '../../util';
 
 /* 	test that the external python environment is set up with hatchet.
 	test that all the tools to find and interact with this environment work.
@@ -182,7 +182,13 @@ suite('Profile Parsing Tests', () => {
 
 		let tree = await profile.getTree();
 		assert.strictEqual(tree.roots.length, 1);
-		assert.ok(Math.abs(tree.getMaxMetricValue("max_time (inc)") - 5.0556) < 0.0001);
+		
+		const hatchetVersion = await getHatchetVersion();
+		if (hatchetVersion === "1.3.1") {
+			assert.ok(Math.abs(tree.getMaxMetricValue("max_time (inc)") - 5.0556) < 0.0001);
+		} else {
+			assert.ok(Math.abs(tree.getMaxInclusiveTime() - 5.0556) < 0.0001);
+		}
 	});
 
 	test('Open JSON Profile', async () => {

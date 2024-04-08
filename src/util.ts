@@ -92,3 +92,10 @@ export async function findPythonWithCache(context: vscode.ExtensionContext, impo
 		return pythonPath;
 	});
 }
+
+
+export async function getHatchetVersion(pythonPath?: string|vscode.Uri): Promise<string> {
+    pythonPath = pythonPath || await getPythonPath();
+    let output = execSync(`${pythonPath} -c "import hatchet; print(hatchet.version.__version__)"`);
+    return output.toString().trim();
+}
