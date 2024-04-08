@@ -4,7 +4,7 @@ import { ProfilerOutput, ProfilerOutputTree, ProfilerOutputNode } from './profil
 
 /**
  * Custom document type for profile trees. Allows the tree to be opened
- * inside a custom editor. Initialized with a URI and returns a 
+ * inside a custom editor. Initialized with a URI and returns a
  * ProfilerOutputTree on getContents().
  */
 class ProfileTreeDocument implements vscode.CustomDocument {
@@ -23,11 +23,11 @@ class ProfileTreeDocument implements vscode.CustomDocument {
     dispose() {
         this.profilerOutput.dispose();
     }
-};
+}
 
 /**
  * Custom readonly editor window. Defines the webview panel for displaying tree
- * data from ProfilerOutputTree objects. 
+ * data from ProfilerOutputTree objects.
  */
 export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
     public static viewType = 'profileviewer.profileTreeEditor';
@@ -48,45 +48,56 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
         });
 
         /* register as custom editor */
-        context.subscriptions.push(vscode.window.registerCustomEditorProvider(ProfileTreeEditor.viewType, this, {
-            webviewOptions: {
-                retainContextWhenHidden: true,
-            },
-            supportsMultipleEditorsPerDocument: true,
-        }));
+        context.subscriptions.push(
+            vscode.window.registerCustomEditorProvider(ProfileTreeEditor.viewType, this, {
+                webviewOptions: {
+                    retainContextWhenHidden: true,
+                },
+                supportsMultipleEditorsPerDocument: true,
+            })
+        );
     }
 
     async resolveCustomEditor(
-      document: ProfileTreeDocument,
-      webviewPanel: vscode.WebviewPanel,
-      _token: vscode.CancellationToken
+        document: ProfileTreeDocument,
+        webviewPanel: vscode.WebviewPanel,
+        _token: vscode.CancellationToken
     ): Promise<void> {
         // Set the webview panel's title and icon
         webviewPanel.title = 'Profile Tree';
-        
+
         // Enable the HTML content security policy
         webviewPanel.webview.options = {
             enableScripts: true,
-		    enableCommandUris: true,
+            enableCommandUris: true,
         };
 
         // Handle messages from the webview
-        webviewPanel.webview.onDidReceiveMessage((msg) => this.onDidReceiveMessage(msg, webviewPanel, document), undefined, this.context.subscriptions);
+        webviewPanel.webview.onDidReceiveMessage(
+            msg => this.onDidReceiveMessage(msg, webviewPanel, document),
+            undefined,
+            this.context.subscriptions
+        );
 
         // Set the webview's initial html content
         document.profilerOutput.setContext(this.context);
-        document.getContents().then(async (tree: ProfilerOutputTree) => {
-            webviewPanel.webview.html = await this.getHtmlForWebview(tree, webviewPanel.webview, "time (inc)");
-        }, (reason: any) => {
-            if (reason.code && reason.code === "1001") {
-                this.context.workspaceState.update("pythonWithHatchetPath", undefined);
-                vscode.window.showErrorMessage(`Could not find Hatchet install. Run 'pip install hatchet' in your python environment.\nError parsing profile: ${reason.message}.`);
-            } else {
-                vscode.window.showErrorMessage(`Error parsing profile: ${reason.message}`);
+        document.getContents().then(
+            async (tree: ProfilerOutputTree) => {
+                webviewPanel.webview.html = await this.getHtmlForWebview(tree, webviewPanel.webview, 'time (inc)');
+            },
+            (reason: any) => {
+                if (reason.code && reason.code === '1001') {
+                    this.context.workspaceState.update('pythonWithHatchetPath', undefined);
+                    vscode.window.showErrorMessage(
+                        `Could not find Hatchet install. Run 'pip install hatchet' in your python environment.\nError parsing profile: ${reason.message}.`
+                    );
+                } else {
+                    vscode.window.showErrorMessage(`Error parsing profile: ${reason.message}`);
+                }
             }
-        });
+        );
     }
-  
+
     openCustomDocument(_uri: vscode.Uri): vscode.CustomDocument {
         return new ProfileTreeDocument(_uri);
     }
@@ -107,7 +118,7 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
                 });
                 break;
             case 'changeMetric':
-                const newMetric = message.metric || "time (inc)";
+                const newMetric = message.metric || 'time (inc)';
                 document.getContents().then(async (tree: ProfilerOutputTree) => {
                     webviewPanel.webview.html = await this.getHtmlForWebview(tree, webviewPanel.webview, newMetric);
                 });
@@ -116,18 +127,20 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
                 document.getContents().then(async (tree: ProfilerOutputTree) => {
                     /* prompt user for filename and write out tree data */
                     const exportData = tree.toString();
-                    vscode.window.showSaveDialog({
-                        filters: {
-                            // eslint-disable-next-line @typescript-eslint/naming-convention
-                            'JSON': ['json']
-                        },
-                        saveLabel: "Export Profile Data",
-                        title: "Export Profile Data",
-                    }).then((uri: vscode.Uri | undefined) => {
-                        if (uri) {
-                            vscode.workspace.fs.writeFile(uri, Buffer.from(exportData));
-                        }
-                    });
+                    vscode.window
+                        .showSaveDialog({
+                            filters: {
+                                // eslint-disable-next-line @typescript-eslint/naming-convention
+                                JSON: ['json'],
+                            },
+                            saveLabel: 'Export Profile Data',
+                            title: 'Export Profile Data',
+                        })
+                        .then((uri: vscode.Uri | undefined) => {
+                            if (uri) {
+                                vscode.workspace.fs.writeFile(uri, Buffer.from(exportData));
+                            }
+                        });
                 });
                 break;
         }
@@ -135,11 +148,11 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
 
     private escapeHtml(s: string): string {
         return s
-         .replace(/&/g, "&amp;")
-         .replace(/</g, "&lt;")
-         .replace(/>/g, "&gt;")
-         .replace(/"/g, "&quot;")
-         .replace(/'/g, "&#039;");
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 
     private scaleColor(value: number): string {
@@ -148,8 +161,8 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
         var red = Math.floor(255 * value);
         var green = Math.floor(255 * (1 - value));
         var blue = 0;
-        
-        return "rgb(" + red + "," + green + "," + blue + ")";
+
+        return 'rgb(' + red + ',' + green + ',' + blue + ')';
     }
 
     private getMetricHtmlElement(value: number, maxValue: number): string {
@@ -157,7 +170,11 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
         return `<span style="color: ${color};">${value.toFixed(4)}</span>`;
     }
 
-    private getFilePathHtmlElement(filename: string, resolvedFilename: string | undefined, line: number | undefined): string {
+    private getFilePathHtmlElement(
+        filename: string,
+        resolvedFilename: string | undefined,
+        line: number | undefined
+    ): string {
         const filenameHtml = this.escapeHtml(filename);
 
         if (resolvedFilename) {
@@ -171,7 +188,7 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
         if (!node.isOnHotPath()) {
             return '';
         }
-        if (vscode.workspace.getConfiguration("profileviewer").get("animatedHotPathIcons") === true) {
+        if (vscode.workspace.getConfiguration('profileviewer').get('animatedHotPathIcons') === true) {
             return '<i class="hotpath-icon fancy-hotpath-icon codicon codicon-flame"></i>';
         } else {
             return '<i class="hotpath-icon codicon codicon-flame"></i>';
@@ -192,28 +209,40 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
 
         /* create an option html element for each metric */
         const metricOptions = metrics.map((metric: string, idx: number): string => {
-            const selected = (selectedIdx === idx) ? "selected" : "";
+            const selected = selectedIdx === idx ? 'selected' : '';
             return `<option class="metric__option" value="${metric}" ${selected}>${metric}</option>`;
         });
-        return metricOptions.join("");
+        return metricOptions.join('');
     }
-    
-    private async getHtmlNestedLists(node: ProfilerOutputNode, metric: string, maxMetricValue: number, depth: number): Promise<string> {
+
+    private async getHtmlNestedLists(
+        node: ProfilerOutputNode,
+        metric: string,
+        maxMetricValue: number,
+        depth: number
+    ): Promise<string> {
         let resolvedFilename = await node.getResolvedFilename();
         const line = node.getLine();
 
         const nameElem = this.escapeHtml(node.name);
         const metricElem = this.getMetricHtmlElement(node.getMetricValue(metric) || 0, maxMetricValue);
-        const filenameElem = this.getFilePathHtmlElement(node.getFilename() || "", resolvedFilename, line);
+        const filenameElem = this.getFilePathHtmlElement(node.getFilename() || '', resolvedFilename, line);
         const hotPathElem = this.getHotPathIcon(node);
 
         /* each node is a list item */
-        let htmlContent = "<li>";
+        let htmlContent = '<li>';
 
         /* handle case where node has children */
         if (node.children && node.children.length > 0) {
-            const detailsAttr = (depth < this.initialLevelsOpen) ? " open" : "";
-            htmlContent += `<details ${detailsAttr}><summary> ${hotPathElem}(` + metricElem + " s) " + nameElem + " " + filenameElem + " </summary><ul>";
+            const detailsAttr = depth < this.initialLevelsOpen ? ' open' : '';
+            htmlContent +=
+                `<details ${detailsAttr}><summary> ${hotPathElem}(` +
+                metricElem +
+                ' s) ' +
+                nameElem +
+                ' ' +
+                filenameElem +
+                ' </summary><ul>';
             /* sorted children by inclusive time */
             node.children.sort((a, b) => {
                 return (b.getMetricValue(metric) || 0) - (a.getMetricValue(metric) || 0);
@@ -225,31 +254,38 @@ export class ProfileTreeEditor implements vscode.CustomReadonlyEditorProvider {
                     htmlContent += await this.getHtmlNestedLists(child, metric, maxMetricValue, depth + 1);
                 }
             }
-            htmlContent += "</ul></details>";
+            htmlContent += '</ul></details>';
         } else {
-            htmlContent += '<span class="tree__root">(' + metricElem + " s) " + nameElem + " " + filenameElem + "</span>";
+            htmlContent +=
+                '<span class="tree__root">(' + metricElem + ' s) ' + nameElem + ' ' + filenameElem + '</span>';
         }
-        htmlContent += "</li>";
+        htmlContent += '</li>';
         return htmlContent;
     }
 
-    private async getHtmlForWebview(tree: ProfilerOutputTree, webview: vscode.Webview, metric: string): Promise<string> {
+    private async getHtmlForWebview(
+        tree: ProfilerOutputTree,
+        webview: vscode.Webview,
+        metric: string
+    ): Promise<string> {
         if (!this.htmlTemplate) {
             return '';
         }
-        const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css'));
+        const codiconsUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this.context.extensionUri, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css')
+        );
 
         const maxMetricValue = tree.getMaxMetricValue(metric, true);
-        let htmlLists = "";
+        let htmlLists = '';
         for (let root of tree.roots) {
             htmlLists += '<ul class="tree">';
             htmlLists += await this.getHtmlNestedLists(root, metric, maxMetricValue, 0);
-            htmlLists += "</ul>";
+            htmlLists += '</ul>';
         }
-        let htmlContent = this.htmlTemplate.replace("{{ data }}", htmlLists);
-        htmlContent = htmlContent.replace("{{ availableMetrics }}", this.getMetricsAsHTMLOptions(tree, metric));
-        htmlContent = htmlContent.replace("{{ codiconsUri }}", codiconsUri.toString());
-        htmlContent = htmlContent.replace("{{ cspSource }}", webview.cspSource);
+        let htmlContent = this.htmlTemplate.replace('{{ data }}', htmlLists);
+        htmlContent = htmlContent.replace('{{ availableMetrics }}', this.getMetricsAsHTMLOptions(tree, metric));
+        htmlContent = htmlContent.replace('{{ codiconsUri }}', codiconsUri.toString());
+        htmlContent = htmlContent.replace('{{ cspSource }}', webview.cspSource);
         return htmlContent;
     }
-  }
+}

@@ -5,7 +5,7 @@ import { HPCToolkitProfiler } from './hpctoolkit';
 
 /* create a registry for ids to profile classes */
 interface ProfilerConstructor {
-    new(): Profiler;
+    new (): Profiler;
 }
 let profilerRegistry: { [id: string]: ProfilerConstructor } = {};
 function register(id: string, ctor: ProfilerConstructor) {
@@ -23,6 +23,6 @@ export function profilerFactory(id: string): Profiler {
 }
 
 /* register profilers */
-register("PyInstrument", PyInstrumentProfiler);
-register("cProfile", CProfileProfiler);
-register("HPCToolkit", HPCToolkitProfiler);
+register('PyInstrument', PyInstrumentProfiler);
+register('cProfile', CProfileProfiler);
+register('HPCToolkit', HPCToolkitProfiler);

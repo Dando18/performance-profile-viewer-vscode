@@ -26,16 +26,17 @@ export class ProfilerTaskProvider implements vscode.TaskProvider {
     public resolveTask(_task: vscode.Task, _token: vscode.CancellationToken): vscode.ProviderResult<vscode.Task> {
         const task = _task.definition.type ? _task : undefined;
         if (task) {
-            const name = task.definition.name || task.definition.program || task.definition.executable || task.definition.type;
+            const name =
+                task.definition.name || task.definition.program || task.definition.executable || task.definition.type;
             const commandLine: string = this.profiler.getCommandLine(task.definition);
             return new vscode.Task(
                 task.definition,
                 vscode.TaskScope.Workspace,
                 `Profile ${name}`,
                 task.definition.type,
-                new vscode.ShellExecution(commandLine),
+                new vscode.ShellExecution(commandLine)
             );
         }
         return undefined;
     }
-};
+}

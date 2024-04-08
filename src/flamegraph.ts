@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import { ProfilerOutput, ProfilerOutputTree, ProfilerOutputNode } from './profileroutput';
 
-
 class ProfileFlameGraphDocument implements vscode.CustomDocument {
     public uri: vscode.Uri;
     public profilerOutput: ProfilerOutput;
@@ -18,7 +17,7 @@ class ProfileFlameGraphDocument implements vscode.CustomDocument {
     dispose() {
         this.profilerOutput.dispose();
     }
-};
+}
 
 export class FlameGraphView implements vscode.CustomReadonlyEditorProvider {
     public static viewType = 'profileviewer.profileFlameGraphViewer';
@@ -28,12 +27,14 @@ export class FlameGraphView implements vscode.CustomReadonlyEditorProvider {
         this.context = context;
 
         /* register as custom editor */
-        context.subscriptions.push(vscode.window.registerCustomEditorProvider(FlameGraphView.viewType, this, {
-            webviewOptions: {
-                retainContextWhenHidden: true,
-            },
-            supportsMultipleEditorsPerDocument: true,
-        }));
+        context.subscriptions.push(
+            vscode.window.registerCustomEditorProvider(FlameGraphView.viewType, this, {
+                webviewOptions: {
+                    retainContextWhenHidden: true,
+                },
+                supportsMultipleEditorsPerDocument: true,
+            })
+        );
     }
 
     async resolveCustomEditor(
@@ -49,28 +50,32 @@ export class FlameGraphView implements vscode.CustomReadonlyEditorProvider {
         };
 
         webviewPanel.webview.onDidReceiveMessage(this.onDidReceiveMessage, undefined, this.context.subscriptions);
-        
+
         document.profilerOutput.setContext(this.context);
-        document.getContents().then((tree: ProfilerOutputTree) => {
-            let parentTree = tree.getTreeWithSingleRoot();
-            parentTree.setValueMetric("time (inc)", true);
-            webviewPanel.webview.html = this.getHtmlForWebview(parentTree);
-        }, (reason: any) => {
-            if (reason.code && reason.code === "1001") {
-                this.context.workspaceState.update("pythonWithHatchetPath", undefined);
-                vscode.window.showErrorMessage(`Could not find Hatchet install. Run 'pip install hatchet' in your python environment.\nError parsing profile: ${reason.message}.`);
-            } else {
-                vscode.window.showErrorMessage(`Error parsing profile: ${reason.message}`);
+        document.getContents().then(
+            (tree: ProfilerOutputTree) => {
+                let parentTree = tree.getTreeWithSingleRoot();
+                parentTree.setValueMetric('time (inc)', true);
+                webviewPanel.webview.html = this.getHtmlForWebview(parentTree);
+            },
+            (reason: any) => {
+                if (reason.code && reason.code === '1001') {
+                    this.context.workspaceState.update('pythonWithHatchetPath', undefined);
+                    vscode.window.showErrorMessage(
+                        `Could not find Hatchet install. Run 'pip install hatchet' in your python environment.\nError parsing profile: ${reason.message}.`
+                    );
+                } else {
+                    vscode.window.showErrorMessage(`Error parsing profile: ${reason.message}`);
+                }
             }
-        });
+        );
     }
 
     openCustomDocument(uri: vscode.Uri): vscode.CustomDocument {
         return new ProfileFlameGraphDocument(uri);
     }
 
-    private onDidReceiveMessage(message: any) {
-    }
+    private onDidReceiveMessage(message: any) {}
 
     private getHtmlForWebview(tree: ProfilerOutputNode): string {
         const treeString: string = tree.toString();
@@ -97,4 +102,4 @@ export class FlameGraphView implements vscode.CustomReadonlyEditorProvider {
         </body>
         </html>`;
     }
-};
+}

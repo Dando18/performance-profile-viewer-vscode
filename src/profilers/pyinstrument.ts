@@ -15,20 +15,22 @@ interface PyInstrumentTaskDefinition extends vscode.TaskDefinition {
  * A Profiler implementation for PyInstrument.
  */
 export class PyInstrumentProfiler extends Profiler {
-
     constructor() {
-        super("PyInstrument", "pyinstrument", false);
+        super('PyInstrument', 'pyinstrument', false);
     }
 
     public isValidFormat(filePath: string): Promise<boolean> {
         /*  return true if filePath is a file and points to a JSON file 
             todo -- check if contents of filePath are valid JSON */
         return new Promise<boolean>((resolve, _reject) => {
-            vscode.workspace.fs.stat(vscode.Uri.file(filePath)).then((stat) => {
-                resolve(stat.type === vscode.FileType.File);
-            }, () => {
-                resolve(false);
-            });
+            vscode.workspace.fs.stat(vscode.Uri.file(filePath)).then(
+                stat => {
+                    resolve(stat.type === vscode.FileType.File);
+                },
+                () => {
+                    resolve(false);
+                }
+            );
         });
     }
 
@@ -42,13 +44,12 @@ export class PyInstrumentProfiler extends Profiler {
     public getCommandLine(_task: vscode.TaskDefinition): string {
         const task = _task as PyInstrumentTaskDefinition;
 
-        let cmdStr = "pyinstrument ";
-        cmdStr += task.renderer ? `--renderer ${task.renderer} ` : "";
-        cmdStr += task.outputFile ? `--outfile ${task.outputFile} ` : "";
+        let cmdStr = 'pyinstrument ';
+        cmdStr += task.renderer ? `--renderer ${task.renderer} ` : '';
+        cmdStr += task.outputFile ? `--outfile ${task.outputFile} ` : '';
         cmdStr += task.program;
-        cmdStr += task.args ? ` ${task.args.join(' ')}` : "";
+        cmdStr += task.args ? ` ${task.args.join(' ')}` : '';
 
         return cmdStr;
     }
-
 }

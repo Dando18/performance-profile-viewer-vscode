@@ -76,7 +76,10 @@
           "description": "Whether to animate the hot path icons in the flame graph."
         },
         "profileviewer.pythonPath": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "default": null,
           "scope": "machine-overridable",
           "description": "The path to the Python executable used to run the internal Python files. Should have hatchet installed."
@@ -214,16 +217,22 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
+    "format": "prettier --write \"src/**/*.{ts,json}\" \"./**/*.{md,json,yaml,yml}\"",
+    "check-format": "prettier --check \"src/**/*.{ts,json}\" \"./**/*.{md,json,yaml,yml}\"",
     "test": "node ./out/test/runTest.js",
+    "coverage": "c8 --clean npm run test -- stable",
+    "package": "vsce package",
     "deploy": "vsce publish"
   },
   "devDependencies": {
     "@types/vscode": "^1.84.2",
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
-    "@types/node": "20.2.5",
+    "@types/node": "20.12.5",
     "@typescript-eslint/eslint-plugin": "^5.59.8",
     "@typescript-eslint/parser": "^5.59.8",
+    "c8": "^9.1.0",
+    "prettier": "^3.2.5",
     "eslint": "^8.41.0",
     "glob": "^8.1.0",
     "mocha": "^10.2.0",

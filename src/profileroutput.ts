@@ -8,41 +8,41 @@ import { getPythonPath, findPythonWithCache } from './util';
  */
 export const PROFILER_OUTPUT_TYPES = {
     hpctoolkit: {
-        name: "HPCToolkit",
-        isDirectory: true
+        name: 'HPCToolkit',
+        isDirectory: true,
     },
     caliper: {
-        name: "Caliper",
-        isDirectory: false
+        name: 'Caliper',
+        isDirectory: false,
     },
     tau: {
-        name: "TAU",
-        isDirectory: true
+        name: 'TAU',
+        isDirectory: true,
     },
     pyinstrument: {
-        name: "PyInstrument",
-        isDirectory: false
+        name: 'PyInstrument',
+        isDirectory: false,
     },
     scorep: {
-        name: "ScoreP",
-        isDirectory: false
+        name: 'ScoreP',
+        isDirectory: false,
     },
     gprof: {
-        name: "GProf",
-        isDirectory: false
+        name: 'GProf',
+        isDirectory: false,
     },
     timemory: {
-        name: "Timemory",
-        isDirectory: false
+        name: 'Timemory',
+        isDirectory: false,
     },
     cprofile: {
-        name: "cProfile",
-        isDirectory: false
+        name: 'cProfile',
+        isDirectory: false,
     },
     json: {
-        name: "JSON",
-        isDirectory: false
-    }
+        name: 'JSON',
+        isDirectory: false,
+    },
 };
 
 /**
@@ -88,11 +88,11 @@ export class ProfilerOutputNode {
     }
 
     public getInclusiveTime(): number | undefined {
-        return this.getMetricValue("time (inc)");
+        return this.getMetricValue('time (inc)');
     }
 
     public getExclusiveTime(): number | undefined {
-        return this.getMetricValue("time");
+        return this.getMetricValue('time');
     }
 
     public getFilename(): string | undefined {
@@ -100,7 +100,7 @@ export class ProfilerOutputNode {
     }
 
     public isOnHotPath(): boolean {
-        return this.attributes.hasOwnProperty("hot_path") && this.attributes["hot_path"];
+        return this.attributes.hasOwnProperty('hot_path') && this.attributes['hot_path'];
     }
 
     private async fileExists(filename: string): Promise<boolean> {
@@ -122,7 +122,9 @@ export class ProfilerOutputNode {
             }
 
             /* now check if workspaceRoot + filename exists */
-            let workspaceRoot = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri : undefined;
+            let workspaceRoot = vscode.workspace.workspaceFolders
+                ? vscode.workspace.workspaceFolders[0].uri
+                : undefined;
             if (workspaceRoot) {
                 if (await this.fileExists(vscode.Uri.joinPath(workspaceRoot, filename).fsPath)) {
                     return vscode.Uri.joinPath(workspaceRoot, filename).fsPath;
@@ -166,7 +168,7 @@ export class ProfilerOutputNode {
     public toString(): string {
         return JSON.stringify(this);
     }
-};
+}
 
 /**
  * The profile output tree. Wraps a list of root nodes.
@@ -184,12 +186,19 @@ export class ProfilerOutputTree {
         } else {
             const rootIncTime = this.getMaxInclusiveTime();
             // eslint-disable-next-line @typescript-eslint/naming-convention
-            return new ProfilerOutputNode("root", {name: "root", type: "root"}, {time: 0, "time (inc)": rootIncTime}, {}, this.roots);
+            return new ProfilerOutputNode(
+                'root',
+                { name: 'root', type: 'root' },
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                { 'time': 0, 'time (inc)': rootIncTime },
+                {},
+                this.roots
+            );
         }
     }
 
     public static fromObject(obj: any): ProfilerOutputTree {
-        if (obj.hasOwnProperty("roots")) {
+        if (obj.hasOwnProperty('roots')) {
             obj = obj.roots;
         }
         const roots = obj.map((node: any) => ProfilerOutputNode.fromObject(node));
@@ -243,8 +252,7 @@ export class ProfilerOutputTree {
 
         return availableMetrics;
     }
-};
-
+}
 
 /**
  * This class is intended for interfacing with the profiler output files via hatchet.
@@ -286,25 +294,35 @@ export class ProfilerOutput implements vscode.Disposable {
     }
 
     public getTree(): Thenable<ProfilerOutputTree> {
-        if (this.type === "json") {
+        if (this.type === 'json') {
             return this.getTreeFromJson();
         }
 
         return new Promise<ProfilerOutputTree>((resolve, reject) => {
-            let pythonPathPromise = (this.context) ? findPythonWithCache(this.context, ["hatchet"], true) : getPythonPath();
+            let pythonPathPromise = this.context
+                ? findPythonWithCache(this.context, ['hatchet'], true)
+                : getPythonPath();
 
-            pythonPathPromise.then((pythonPath) => {
-
+            pythonPathPromise.then(pythonPath => {
                 let extensionUri: vscode.Uri;
                 if (this.context) {
                     extensionUri = this.context.extensionUri;
                 } else {
-                    extensionUri = vscode.extensions.getExtension("danielnichols.performance-profile-viewer")!.extensionUri;
+                    extensionUri = vscode.extensions.getExtension(
+                        'danielnichols.performance-profile-viewer'
+                    )!.extensionUri;
                 }
 
-                const pythonScriptUri = vscode.Uri.joinPath(extensionUri, "src", "parse_profile.py");
+                const pythonScriptUri = vscode.Uri.joinPath(extensionUri, 'src', 'parse_profile.py');
                 const pythonScriptPath = pythonScriptUri.fsPath;
-                this.process = spawn(`${pythonPath}`, [pythonScriptPath, "--profile", this.uri.fsPath, "--type", this.type, "--hot-path"]);
+                this.process = spawn(`${pythonPath}`, [
+                    pythonScriptPath,
+                    '--profile',
+                    this.uri.fsPath,
+                    '--type',
+                    this.type,
+                    '--hot-path',
+                ]);
 
                 // Collect the output from the Python script
                 let output = '';
@@ -320,27 +338,27 @@ export class ProfilerOutput implements vscode.Disposable {
                         stderr += data.toString();
                     });
                 }
-        
+
                 // Handle the completion of the Python script
                 this.process.on('close', (code: number) => {
-                if (code === 0) {
-                    resolve(ProfilerOutputTree.fromString(output)); // Resolve the promise with the output
-                } else {
-                    try {
-                        const error = JSON.parse(output).error;
-                        reject(new Error(`${error.code} -- ${error.message}`));
-                    } catch (e) {
-                        reject(new Error(`Python script exited with code ${code}`));
+                    if (code === 0) {
+                        resolve(ProfilerOutputTree.fromString(output)); // Resolve the promise with the output
+                    } else {
+                        try {
+                            const error = JSON.parse(output).error;
+                            reject(new Error(`${error.code} -- ${error.message}`));
+                        } catch (e) {
+                            reject(new Error(`Python script exited with code ${code}`));
+                        }
                     }
-                }
                 });
-        
+
                 // Handle errors in the Python process
                 this.process.on('error', (err: Error) => {
                     reject(err);
                 });
             });
-		});
+        });
     }
 
     public dispose(): void {
@@ -348,4 +366,4 @@ export class ProfilerOutput implements vscode.Disposable {
             this.process.kill();
         }
     }
-};
+}

@@ -2,10 +2,9 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { execSync } from 'child_process';
 
-
 function doesPythonHaveModules(pythonPath: string, modules: string[]): boolean {
     try {
-        let output = execSync(`${pythonPath} -c \"import ${modules.join("; import ")};\"`);
+        let output = execSync(`${pythonPath} -c \"import ${modules.join('; import ')};\"`);
         if (output) {
             return true;
         }
@@ -18,7 +17,7 @@ function doesPythonHaveModules(pythonPath: string, modules: string[]): boolean {
 /** A helper function to find the correct python to use in the shell.
  * First checks if path is set in settings.
  * Then checks if the Python extension is installed, and if so, uses the
- * python.interpreterPath. 
+ * python.interpreterPath.
  * If not, it checks the python.pythonPath setting.
  * Then it checks it Python3_ROOT_DIR environment variable is set.
  * Then try running `python3 --version` in shell. If it is successful, use that.
@@ -26,14 +25,13 @@ function doesPythonHaveModules(pythonPath: string, modules: string[]): boolean {
  * @returns the path to the python executable
  */
 export async function getPythonPath(imports?: string[]): Promise<string | vscode.Uri> {
-
     // check if the pythonPath setting is set
-    if (vscode.workspace.getConfiguration("profileviewer").get("pythonPath")) {
-        return vscode.workspace.getConfiguration("profileviewer").get("pythonPath")!;
+    if (vscode.workspace.getConfiguration('profileviewer').get('pythonPath')) {
+        return vscode.workspace.getConfiguration('profileviewer').get('pythonPath')!;
     }
 
     // check if the Python extension is installed
-    const pythonExtension = vscode.extensions.getExtension("ms-python.python");
+    const pythonExtension = vscode.extensions.getExtension('ms-python.python');
     if (pythonExtension) {
         const python = await pythonExtension.activate();
         if (python && python.interpreterPath) {
@@ -44,7 +42,7 @@ export async function getPythonPath(imports?: string[]): Promise<string | vscode
     }
 
     // check if the python.pythonPath setting is set
-    const pythonPath = vscode.workspace.getConfiguration("python").get("pythonPath");
+    const pythonPath = vscode.workspace.getConfiguration('python').get('pythonPath');
     if (pythonPath) {
         if (!imports || doesPythonHaveModules(pythonPath.toString(), imports)) {
             return pythonPath.toString();
@@ -54,7 +52,7 @@ export async function getPythonPath(imports?: string[]): Promise<string | vscode
     // check if Python3_ROOT_DIR is set
     const python3RootDir = process.env.Python3_ROOT_DIR;
     if (python3RootDir) {
-        let pythonExec = (process.platform === "win32") ? "python.exe" : "bin/python";
+        let pythonExec = process.platform === 'win32' ? 'python.exe' : 'bin/python';
         const fpath = path.resolve(python3RootDir, pythonExec);
         if (!imports || doesPythonHaveModules(fpath, imports)) {
             return fpath;
@@ -63,32 +61,42 @@ export async function getPythonPath(imports?: string[]): Promise<string | vscode
 
     // check if python3 is available
     try {
-        let output = execSync("python3 --version");
+        let output = execSync('python3 --version');
         if (output) {
-            if (!imports || doesPythonHaveModules("python3", imports)) {
-                return "python3";
+            if (!imports || doesPythonHaveModules('python3', imports)) {
+                return 'python3';
             }
         }
     } catch (e) {}
 
-    return "python";
+    return 'python';
 }
 
-export async function findPythonWithCache(context: vscode.ExtensionContext, imports?: string[], useCached: boolean = true): Promise<string | undefined> {
-	if (useCached) {
-		const cachedPython = context.workspaceState.get<string>("pythonWithHatchetPath");
-		if (cachedPython) {
-			return cachedPython;
-		}
-	}
-	return getPythonPath(imports).then((pythonPath: string | vscode.Uri) => {
-		if (pythonPath instanceof vscode.Uri) {
-			pythonPath = pythonPath.fsPath;
-		}
+export async function findPythonWithCache(
+    context: vscode.ExtensionContext,
+    imports?: string[],
+    useCached: boolean = true
+): Promise<string | undefined> {
+    if (useCached) {
+        const cachedPython = context.workspaceState.get<string>('pythonWithHatchetPath');
+        if (cachedPython) {
+            return cachedPython;
+        }
+    }
+    return getPythonPath(imports).then((pythonPath: string | vscode.Uri) => {
+        if (pythonPath instanceof vscode.Uri) {
+            pythonPath = pythonPath.fsPath;
+        }
 
-		if (pythonPath) {
-			context.workspaceState.update("pythonWithHatchetPath", pythonPath);
-		}
-		return pythonPath;
-	});
+        if (pythonPath) {
+            context.workspaceState.update('pythonWithHatchetPath', pythonPath);
+        }
+        return pythonPath;
+    });
+}
+
+export async function getHatchetVersion(pythonPath?: string | vscode.Uri): Promise<string> {
+    pythonPath = pythonPath || (await getPythonPath());
+    let output = execSync(`${pythonPath} -c "import hatchet; print(hatchet.version.__version__)"`);
+    return output.toString().trim();
 }

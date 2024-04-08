@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
-/*  An abstract Profiler class that defines the interface for all profilers 
-*   that can be used with the extension. */
+/*  An abstract Profiler class that defines the interface for all profilers
+ *   that can be used with the extension. */
 export abstract class Profiler {
     /**
      * The name of the profiler
