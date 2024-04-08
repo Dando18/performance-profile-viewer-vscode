@@ -13,7 +13,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
         python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
         hatchet-version: ["1.3.1", "1.4.0"]
-        vscode-version: ["1.81.1", "1.82.3", "1.83.1", "1.84.2", "1.85.2", "1.86.0", "1.88.0", "stable"]
+        vscode-version: ["1.84.2", "1.85.2", "1.86.0", "1.88.0", "stable"]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
