@@ -189,6 +189,7 @@ export class ProfilerOutputTree {
             return new ProfilerOutputNode(
                 'root',
                 { name: 'root', type: 'root' },
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 { 'time': 0, 'time (inc)': rootIncTime },
                 {},
                 this.roots
