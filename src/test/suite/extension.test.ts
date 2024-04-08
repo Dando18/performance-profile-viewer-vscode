@@ -182,7 +182,7 @@ suite('Profile Parsing Tests', () => {
 
 		let tree = await profile.getTree();
 		assert.strictEqual(tree.roots.length, 1);
-		assert.ok(Math.abs(tree.getMaxMetricValue("max_time (inc)") - 5.0556) < 0.0001);
+		assert.ok(Math.abs(tree.getMaxInclusiveTime() - 5.0556) < 0.0001);
 	});
 
 	test('Open JSON Profile', async () => {
