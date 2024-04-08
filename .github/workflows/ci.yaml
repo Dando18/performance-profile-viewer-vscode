@@ -70,12 +70,14 @@ jobs:
 
   are_stable_tests_passing:
     needs: [test-stable]
+    runs-on: ubuntu-latest
     steps:
       - name: Check Stable Tests
         run: echo "Stable tests are passing"
   
   are_all_tests_passing:
     needs: [test, test-stable]
+    runs-on: ubuntu-latest
     steps:
       - name: Check Tests
         run: echo "All tests are passing"
