@@ -70,9 +70,11 @@ jobs:
 
   are_stable_tests_passing:
     needs: [test-stable]
+    run: echo "Stable tests are passing"
   
   are_all_tests_passing:
     needs: [test, test-stable]
+    run: echo "All tests are passing"
 
   coverage:
     runs-on: ubuntu-latest
