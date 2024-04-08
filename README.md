@@ -1,33 +1,31 @@
 <p align="center"><img align="center" width="64" src="./images/icons/ppv-icon-alt.png"/></p>
 <h1 align="center">Performance Profile Viewer</h1>
 
-
 <b>An extension for collecting and viewing performance profiles directly in VSCode.</b>
 
 [![Visual Studio Code](https://img.shields.io/badge/--007ACC?logo=visual%20studio%20code&logoColor=ffffff)](https://marketplace.visualstudio.com/items?itemName=danielnichols.performance-profile-viewer)&nbsp;[![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/danielnichols.performance-profile-viewer)](https://marketplace.visualstudio.com/items?itemName=danielnichols.performance-profile-viewer)&nbsp;[![GitHub release (with filter)](https://img.shields.io/github/v/release/Dando18/performance-profile-viewer-vscode)](https://github.com/Dando18/performance-profile-viewer-vscode/releases)&nbsp;[![GitHub license](https://badgen.net/github/license/Dando18/performance-profile-viewer-vscode)](https://github.com/Dando18/performance-profile-viewer-vscode/blob/develop/LICENSE)&nbsp;[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Dando18/performance-profile-viewer-vscode/.github%2Fworkflows%2Fci.yaml?logo=github&label=ci)](https://github.com/Dando18/performance-profile-viewer-vscode/actions/workflows/ci.yaml)
 
-
 Performance Profile Viewer is an extension for collecting and viewing
-performance profiles directly in VSCode. 
-It can open profiles from 
-[GProf](https://ftp.gnu.org/old-gnu/Manuals/gprof-2.9.1/html_mono/gprof.html), 
-[PyInstrument](https://pyinstrument.readthedocs.io/en/latest/), 
-[CProfile](https://docs.python.org/3/library/profile.html#module-cProfile), 
-[HPCToolkit](http://hpctoolkit.org/), 
-[Caliper](https://software.llnl.gov/Caliper/), 
-[Tau](http://www.cs.uoregon.edu/research/tau/home.php), 
-[Score-P](https://www.vi-hps.org/projects/score-p/), 
+performance profiles directly in VSCode.
+It can open profiles from
+[GProf](https://ftp.gnu.org/old-gnu/Manuals/gprof-2.9.1/html_mono/gprof.html),
+[PyInstrument](https://pyinstrument.readthedocs.io/en/latest/),
+[CProfile](https://docs.python.org/3/library/profile.html#module-cProfile),
+[HPCToolkit](http://hpctoolkit.org/),
+[Caliper](https://software.llnl.gov/Caliper/),
+[Tau](http://www.cs.uoregon.edu/research/tau/home.php),
+[Score-P](https://www.vi-hps.org/projects/score-p/),
 [Timemory](https://github.com/NERSC/timemory),
 and [raw JSON data](/src/test-workspaces/profiles/json/profile.json).
 Currently, it supports a view of the call graph with run times and a flamegraph.
-***NOTE:*** This extension requires the Python package hatchet to be installed.
+**_NOTE:_** This extension requires the Python package hatchet to be installed.
 See [Requirements](#requirements) for more info.
 
 ## Features
 
 ### Viewing Performance Profiles
 
-Open profiles using the command `Profile: Open Profile` (CTRL+SHIFT+P or 
+Open profiles using the command `Profile: Open Profile` (CTRL+SHIFT+P or
 CMD+SHIFT+P to start commands).
 You will be asked for the type of profile and path to the profile.
 Then it will open in a tree and flamegraph view as shown below.
@@ -44,32 +42,30 @@ to the corresponding source code locations.
 
 ### Collecting Profiling Data
 
-Launching the different profilers for your programs is provided through VSCode 
+Launching the different profilers for your programs is provided through VSCode
 tasks.
-For instance, define tasks in your `tasks.json` similar to the PyInstrument 
+For instance, define tasks in your `tasks.json` similar to the PyInstrument
 example below to set up profiler launching directly in VSCode.
 See the [Profiling Documentation](docs/profiling.md) for more details.
 
 ```json
 {
-    "type": "PyInstrument",
-    "program": "main.py",
-    "args": [
-        "--foo"
-    ],
-    "outputPath": "${workspaceFolder}/profile.json"
+  "type": "PyInstrument",
+  "program": "main.py",
+  "args": ["--foo"],
+  "outputPath": "${workspaceFolder}/profile.json"
 }
 ```
 
 ## Requirements
 
-Performance Profile Viewer uses the Python library 
-[Hatchet](https://hatchet.readthedocs.io/en/latest/) 
+Performance Profile Viewer uses the Python library
+[Hatchet](https://hatchet.readthedocs.io/en/latest/)
 to parse and process the different profile types.
 You must install it in order to use the extension.
 Currently, the extension has been tested with Hatchet version 1.3.1
 and Python 3.7 to 3.11.
-Assuming there is a valid Python installation, then it can be installed with 
+Assuming there is a valid Python installation, then it can be installed with
 `pip install hatchet==1.3.1`.
 
 ## Extension Settings
@@ -124,22 +120,20 @@ Issues can be submitted under the [issues tab on GitHub](https://github.com/Dand
 
 ### 0.0.1
 
-Initial release. 
+Initial release.
 
-- Support for profiles from 
-[GProf](https://ftp.gnu.org/old-gnu/Manuals/gprof-2.9.1/html_mono/gprof.html), 
-[PyInstrument](https://pyinstrument.readthedocs.io/en/latest/), 
-[CProfile](https://docs.python.org/3/library/profile.html#module-cProfile), 
-[HPCToolkit](http://hpctoolkit.org/), 
-[Caliper](https://software.llnl.gov/Caliper/), 
-[Tau](http://www.cs.uoregon.edu/research/tau/home.php), 
-[Score-P](https://www.vi-hps.org/projects/score-p/),
-[Timemory](https://github.com/NERSC/timemory),
-and raw JSON data.
+- Support for profiles from
+  [GProf](https://ftp.gnu.org/old-gnu/Manuals/gprof-2.9.1/html_mono/gprof.html),
+  [PyInstrument](https://pyinstrument.readthedocs.io/en/latest/),
+  [CProfile](https://docs.python.org/3/library/profile.html#module-cProfile),
+  [HPCToolkit](http://hpctoolkit.org/),
+  [Caliper](https://software.llnl.gov/Caliper/),
+  [Tau](http://www.cs.uoregon.edu/research/tau/home.php),
+  [Score-P](https://www.vi-hps.org/projects/score-p/),
+  [Timemory](https://github.com/NERSC/timemory),
+  and raw JSON data.
 - Call tree viewer
 - Flamegraph viewer
-
-
 
 # License
 

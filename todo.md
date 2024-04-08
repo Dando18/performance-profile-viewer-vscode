@@ -34,7 +34,6 @@
 - [ ] Replace hatchet for some readers that are already natively JSON (i.e. PyInstrument)
 - [x] Create separate command for opening tree view
 
-
 # Roadmap
 
 - 0.1.0: Clean up existing features/views

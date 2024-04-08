@@ -1,10 +1,10 @@
 on:
   push:
-    branches: [ develop ]
+    branches: [develop]
   pull_request:
-    branches: [ develop ]
+    branches: [develop]
   release:
-    types: [ created ]
+    types: [created]
 
 jobs:
   build:
@@ -28,7 +28,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
+          cache: "pip"
       - name: Install Python Dependencies
         run: pip install hatchet==${{ matrix.hatchet-version }}
       - name: Run Linux Tests
@@ -69,4 +69,3 @@ jobs:
         run: npm run deploy
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-
