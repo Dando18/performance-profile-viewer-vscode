@@ -201,12 +201,7 @@
     [155072.0, 6, 155072.0, 23],
     [262458.0, 7, 262458.0, 23]
   ],
-  "columns": [
-    "inclusive#sum#time.duration",
-    "mpi.rank",
-    "sum#time.duration",
-    "path"
-  ],
+  "columns": ["inclusive#sum#time.duration", "mpi.rank", "sum#time.duration", "path"],
   "column_metadata": [
     {
       "is_value": true

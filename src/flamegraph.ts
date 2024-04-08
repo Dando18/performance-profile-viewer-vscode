@@ -1,102 +1,85 @@
-import * as vscode from "vscode";
-import {
-  ProfilerOutput,
-  ProfilerOutputTree,
-  ProfilerOutputNode,
-} from "./profileroutput";
+import * as vscode from 'vscode';
+import { ProfilerOutput, ProfilerOutputTree, ProfilerOutputNode } from './profileroutput';
 
 class ProfileFlameGraphDocument implements vscode.CustomDocument {
-  public uri: vscode.Uri;
-  public profilerOutput: ProfilerOutput;
+    public uri: vscode.Uri;
+    public profilerOutput: ProfilerOutput;
 
-  constructor(uri: vscode.Uri) {
-    this.uri = uri;
-    this.profilerOutput = ProfilerOutput.fromUri(uri);
-  }
+    constructor(uri: vscode.Uri) {
+        this.uri = uri;
+        this.profilerOutput = ProfilerOutput.fromUri(uri);
+    }
 
-  async getContents(): Promise<ProfilerOutputTree> {
-    return this.profilerOutput.getTree();
-  }
+    async getContents(): Promise<ProfilerOutputTree> {
+        return this.profilerOutput.getTree();
+    }
 
-  dispose() {
-    this.profilerOutput.dispose();
-  }
+    dispose() {
+        this.profilerOutput.dispose();
+    }
 }
 
 export class FlameGraphView implements vscode.CustomReadonlyEditorProvider {
-  public static viewType = "profileviewer.profileFlameGraphViewer";
-  private readonly context: vscode.ExtensionContext;
+    public static viewType = 'profileviewer.profileFlameGraphViewer';
+    private readonly context: vscode.ExtensionContext;
 
-  constructor(context: vscode.ExtensionContext) {
-    this.context = context;
+    constructor(context: vscode.ExtensionContext) {
+        this.context = context;
 
-    /* register as custom editor */
-    context.subscriptions.push(
-      vscode.window.registerCustomEditorProvider(
-        FlameGraphView.viewType,
-        this,
-        {
-          webviewOptions: {
-            retainContextWhenHidden: true,
-          },
-          supportsMultipleEditorsPerDocument: true,
-        },
-      ),
-    );
-  }
+        /* register as custom editor */
+        context.subscriptions.push(
+            vscode.window.registerCustomEditorProvider(FlameGraphView.viewType, this, {
+                webviewOptions: {
+                    retainContextWhenHidden: true,
+                },
+                supportsMultipleEditorsPerDocument: true,
+            })
+        );
+    }
 
-  async resolveCustomEditor(
-    document: ProfileFlameGraphDocument,
-    webviewPanel: vscode.WebviewPanel,
-    _token: vscode.CancellationToken,
-  ): Promise<void> {
-    webviewPanel.title = "FlameGraph Viewer";
+    async resolveCustomEditor(
+        document: ProfileFlameGraphDocument,
+        webviewPanel: vscode.WebviewPanel,
+        _token: vscode.CancellationToken
+    ): Promise<void> {
+        webviewPanel.title = 'FlameGraph Viewer';
 
-    webviewPanel.webview.options = {
-      enableScripts: true,
-      enableCommandUris: true,
-    };
+        webviewPanel.webview.options = {
+            enableScripts: true,
+            enableCommandUris: true,
+        };
 
-    webviewPanel.webview.onDidReceiveMessage(
-      this.onDidReceiveMessage,
-      undefined,
-      this.context.subscriptions,
-    );
+        webviewPanel.webview.onDidReceiveMessage(this.onDidReceiveMessage, undefined, this.context.subscriptions);
 
-    document.profilerOutput.setContext(this.context);
-    document.getContents().then(
-      (tree: ProfilerOutputTree) => {
-        let parentTree = tree.getTreeWithSingleRoot();
-        parentTree.setValueMetric("time (inc)", true);
-        webviewPanel.webview.html = this.getHtmlForWebview(parentTree);
-      },
-      (reason: any) => {
-        if (reason.code && reason.code === "1001") {
-          this.context.workspaceState.update(
-            "pythonWithHatchetPath",
-            undefined,
-          );
-          vscode.window.showErrorMessage(
-            `Could not find Hatchet install. Run 'pip install hatchet' in your python environment.\nError parsing profile: ${reason.message}.`,
-          );
-        } else {
-          vscode.window.showErrorMessage(
-            `Error parsing profile: ${reason.message}`,
-          );
-        }
-      },
-    );
-  }
+        document.profilerOutput.setContext(this.context);
+        document.getContents().then(
+            (tree: ProfilerOutputTree) => {
+                let parentTree = tree.getTreeWithSingleRoot();
+                parentTree.setValueMetric('time (inc)', true);
+                webviewPanel.webview.html = this.getHtmlForWebview(parentTree);
+            },
+            (reason: any) => {
+                if (reason.code && reason.code === '1001') {
+                    this.context.workspaceState.update('pythonWithHatchetPath', undefined);
+                    vscode.window.showErrorMessage(
+                        `Could not find Hatchet install. Run 'pip install hatchet' in your python environment.\nError parsing profile: ${reason.message}.`
+                    );
+                } else {
+                    vscode.window.showErrorMessage(`Error parsing profile: ${reason.message}`);
+                }
+            }
+        );
+    }
 
-  openCustomDocument(uri: vscode.Uri): vscode.CustomDocument {
-    return new ProfileFlameGraphDocument(uri);
-  }
+    openCustomDocument(uri: vscode.Uri): vscode.CustomDocument {
+        return new ProfileFlameGraphDocument(uri);
+    }
 
-  private onDidReceiveMessage(message: any) {}
+    private onDidReceiveMessage(message: any) {}
 
-  private getHtmlForWebview(tree: ProfilerOutputNode): string {
-    const treeString: string = tree.toString();
-    return `
+    private getHtmlForWebview(tree: ProfilerOutputNode): string {
+        const treeString: string = tree.toString();
+        return `
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -118,5 +101,5 @@ export class FlameGraphView implements vscode.CustomReadonlyEditorProvider {
             </script>
         </body>
         </html>`;
-  }
+    }
 }
