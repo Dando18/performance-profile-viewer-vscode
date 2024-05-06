@@ -64,7 +64,7 @@ Performance Profile Viewer uses the Python library
 to parse and process the different profile types.
 You must install it in order to use the extension.
 Currently, the extension has been tested with Hatchet version 1.3.1 to 1.4.0
-and Python 3.7 to 3.11.
+and Python 3.8 to 3.12.
 Assuming there is a valid Python installation, then it can be installed with
 `pip install hatchet==1.4.0`.
 
