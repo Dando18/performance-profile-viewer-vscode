@@ -241,6 +241,6 @@
     "@vscode/vsce": "^2.26.1"
   },
   "dependencies": {
-    "@vscode/codicons": "^0.0.20"
+    "@vscode/codicons": "^0.0.36"
   }
 }
