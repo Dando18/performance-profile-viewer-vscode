@@ -4,11 +4,11 @@ This extension provides a number of tools to assist in collecting performance
 profiles.
 This page documents how to use each of these features.
 
--   [Profiling](#profiling)
-    -   [Profiling Tasks](#profiling-tasks)
-        -   [PyInstrument Task](#pyinstrument-task)
-        -   [cProfile Task](#cprofile-task)
-        -   [HPCToolkit Task](#hpctoolkit-task)
+- [Profiling](#profiling)
+    - [Profiling Tasks](#profiling-tasks)
+        - [PyInstrument Task](#pyinstrument-task)
+        - [cProfile Task](#cprofile-task)
+        - [HPCToolkit Task](#hpctoolkit-task)
 
 ## Profiling Tasks
 
