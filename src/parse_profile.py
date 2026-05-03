@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 import json
+import math
 import os
 import traceback
 
@@ -99,6 +100,21 @@ def label_hot_path(tree: dict, hot_path: list) -> dict:
     
     return tree
 
+
+def sanitize_for_json(obj):
+    if isinstance(obj, dict):
+        return {key: sanitize_for_json(value) for key, value in obj.items()}
+    if isinstance(obj, list):
+        return [sanitize_for_json(value) for value in obj]
+    if isinstance(obj, tuple):
+        return tuple(sanitize_for_json(value) for value in obj)
+    if isinstance(obj, np.floating):
+        obj = float(obj)
+    if isinstance(obj, float) and not math.isfinite(obj):
+        return None
+    return obj
+
+
 def identify_time_metric(gf: ht.GraphFrame) -> str:
     potential_time_columns = ["time", "time (inc)", "time (exc)", "REALTIME (sec) (I)", "REALTIME (sec) (E)"]
     for col in potential_time_columns:
@@ -167,7 +183,7 @@ def main():
         tree = label_hot_path(tree, hot_path)
     
     # print out the tree
-    print(json.dumps(tree, cls=NpEncoder, indent=2))
+    print(json.dumps(sanitize_for_json(tree), cls=NpEncoder, indent=2, allow_nan=False))
 
 
 

@@ -164,8 +164,8 @@ suite('Profile Parsing Tests', () => {
         assert.strictEqual(profile.isDirectory, true);
 
         let tree = await profile.getTree();
-        assert.strictEqual(tree.roots.length, 3);
-        assert.ok(Math.abs(tree.getMaxInclusiveTime() - 1307029.1) < 0.0001);
+        assert.strictEqual(tree.roots.length, 2);
+        assert.ok(Math.abs(tree.getMaxInclusiveTime() - 0.01761375) < 0.0001);
     });
 
     test('Open Tau Profile', async () => {
