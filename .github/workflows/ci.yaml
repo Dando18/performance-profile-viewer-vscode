@@ -14,9 +14,6 @@ jobs:
         python-version: ['3.10', '3.11', '3.12', '3.13']
         hatchet-version: ['1.4.1']
         vscode-version: ['1.84.2']
-        exclude:
-          - python-version: '3.12'
-            hatchet-version: '1.3.1'
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
