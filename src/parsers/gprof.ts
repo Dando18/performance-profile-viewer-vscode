@@ -530,7 +530,7 @@ function parseDotNode(
         return undefined;
     }
 
-    const idMatch = trimmed.match(/^(?:"((?:\\.|[^"])*)"|([^\s\[]+))\s+\[/);
+    const idMatch = trimmed.match(/^(?:"((?:\\.|[^"\\])*)"|([^\s\[]+))\s+\[/);
     if (!idMatch) {
         return undefined;
     }
