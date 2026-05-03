@@ -3,7 +3,7 @@
 
 <b>An extension for collecting and viewing performance profiles directly in VSCode.</b>
 
-[![Visual Studio Code](https://img.shields.io/badge/--007ACC?logo=visual%20studio%20code&logoColor=ffffff)](https://marketplace.visualstudio.com/items?itemName=danielnichols.performance-profile-viewer)&nbsp;[![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/danielnichols.performance-profile-viewer)](https://marketplace.visualstudio.com/items?itemName=danielnichols.performance-profile-viewer)&nbsp;[![GitHub release (with filter)](https://img.shields.io/github/v/release/Dando18/performance-profile-viewer-vscode)](https://github.com/Dando18/performance-profile-viewer-vscode/releases)&nbsp;[![GitHub license](https://badgen.net/github/license/Dando18/performance-profile-viewer-vscode)](https://github.com/Dando18/performance-profile-viewer-vscode/blob/develop/LICENSE)&nbsp;[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Dando18/performance-profile-viewer-vscode/.github%2Fworkflows%2Fci.yaml?logo=github&label=ci)](https://github.com/Dando18/performance-profile-viewer-vscode/actions/workflows/ci.yaml)&nbsp;[![codecov](https://codecov.io/gh/Dando18/performance-profile-viewer-vscode/graph/badge.svg?token=YJPO6ZNCKM)](https://codecov.io/gh/Dando18/performance-profile-viewer-vscode)
+[![GitHub release (with filter)](https://img.shields.io/github/v/release/Dando18/performance-profile-viewer-vscode)](https://github.com/Dando18/performance-profile-viewer-vscode/releases)&nbsp;[![GitHub license](https://badgen.net/github/license/Dando18/performance-profile-viewer-vscode)](https://github.com/Dando18/performance-profile-viewer-vscode/blob/develop/LICENSE)&nbsp;[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Dando18/performance-profile-viewer-vscode/.github%2Fworkflows%2Fci.yaml?logo=github&label=ci)](https://github.com/Dando18/performance-profile-viewer-vscode/actions/workflows/ci.yaml)&nbsp;[![codecov](https://codecov.io/gh/Dando18/performance-profile-viewer-vscode/graph/badge.svg?token=YJPO6ZNCKM)](https://codecov.io/gh/Dando18/performance-profile-viewer-vscode)
 
 Performance Profile Viewer is an extension for collecting and viewing
 performance profiles directly in VSCode.
@@ -82,6 +82,12 @@ Issues can be submitted under the [issues tab on GitHub](https://github.com/Dand
 
 ## Release Notes
 
+### 0.1.3
+
+- Add standalone GProf parser so GProf doesn't depend on hatchet anymore
+- Bump hatchet to 1.4.1
+- Make python finding more robust
+
 ### 0.1.2
 
 - add export and import
@@ -138,7 +144,7 @@ Initial release.
 
 # License
 
-Copyright Daniel Nichols 2024
+Copyright Daniel Nichols 2026
 
 Performance Profile Viewer is published under the [Apache 2.0 license](/LICENSE).
 The flamegraph view uses [d3-flame-graph](https://github.com/spiermar/d3-flame-graph),
