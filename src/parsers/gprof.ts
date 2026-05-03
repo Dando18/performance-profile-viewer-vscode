@@ -556,7 +556,7 @@ function parseDotNode(
 }
 
 function parseDotEdge(line: string): { from: string; to: string } | undefined {
-    const match = line.trim().match(/^(?:"((?:\\.|[^"])*)"|([^\s\[]+))\s*->\s*(?:"((?:\\.|[^"])*)"|([^\s\[]+))\s+\[/);
+    const match = line.trim().match(/^(?:"((?:\\.|[^"\\])*)"|([^\s\[]+))\s*->\s*(?:"((?:\\.|[^"\\])*)"|([^\s\[]+))\s+\[/);
     if (!match) {
         return undefined;
     }
