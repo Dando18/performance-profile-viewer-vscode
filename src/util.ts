@@ -1,17 +1,14 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { execSync } from 'child_process';
+import { execFileSync, execSync } from 'child_process';
 
 function doesPythonHaveModules(pythonPath: string, modules: string[]): boolean {
     try {
-        let output = execSync(`${pythonPath} -c \"import ${modules.join('; import ')};\"`);
-        if (output) {
-            return true;
-        }
+        execFileSync(pythonPath, ['-c', `import ${modules.join('; import ')}`]);
+        return true;
     } catch (err) {
         return false;
     }
-    return false;
 }
 
 /** A helper function to find the correct python to use in the shell.
@@ -26,8 +23,9 @@ function doesPythonHaveModules(pythonPath: string, modules: string[]): boolean {
  */
 export async function getPythonPath(imports?: string[]): Promise<string | vscode.Uri> {
     // check if the pythonPath setting is set
-    if (vscode.workspace.getConfiguration('profileviewer').get('pythonPath')) {
-        return vscode.workspace.getConfiguration('profileviewer').get('pythonPath')!;
+    const profileViewerPythonPath = vscode.workspace.getConfiguration('profileviewer').get<string>('pythonPath');
+    if (profileViewerPythonPath) {
+        return profileViewerPythonPath;
     }
 
     // check if the Python extension is installed
@@ -77,6 +75,12 @@ export async function findPythonWithCache(
     imports?: string[],
     useCached: boolean = true
 ): Promise<string | undefined> {
+    const profileViewerPythonPath = vscode.workspace.getConfiguration('profileviewer').get<string>('pythonPath');
+    if (profileViewerPythonPath) {
+        context.workspaceState.update('pythonWithHatchetPath', profileViewerPythonPath);
+        return profileViewerPythonPath;
+    }
+
     if (useCached) {
         const cachedPython = context.workspaceState.get<string>('pythonWithHatchetPath');
         if (cachedPython) {
