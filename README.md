@@ -82,6 +82,12 @@ Issues can be submitted under the [issues tab on GitHub](https://github.com/Dand
 
 ## Release Notes
 
+### 0.1.3
+
+- Add standalone GProf parser so GProf doesn't depend on hatchet anymore
+- Bump hatchet to 1.4.1
+- Make python finding more robust
+
 ### 0.1.2
 
 - add export and import
@@ -138,7 +144,7 @@ Initial release.
 
 # License
 
-Copyright Daniel Nichols 2024
+Copyright Daniel Nichols 2026
 
 Performance Profile Viewer is published under the [Apache 2.0 license](/LICENSE).
 The flamegraph view uses [d3-flame-graph](https://github.com/spiermar/d3-flame-graph),
