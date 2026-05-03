@@ -1,4 +1,6 @@
 import * as assert from 'assert';
+import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 
 import { execSync } from 'child_process';
@@ -41,6 +43,21 @@ Index by function name
 
 function hasAttribute(node: any, attribute: string): boolean {
     return Boolean(node.attributes[attribute]) || node.children.some((child: any) => hasAttribute(child, attribute));
+}
+
+function createFakePython(rootDir: string): string {
+    const pythonDir = process.platform === 'win32' ? rootDir : path.join(rootDir, 'bin');
+    fs.mkdirSync(pythonDir, { recursive: true });
+
+    const pythonPath = path.join(pythonDir, process.platform === 'win32' ? 'python.exe' : 'python');
+    const script =
+        process.platform === 'win32'
+            ? '@echo off\r\nif "%1"=="--version" echo Python 3.11.0\r\nexit /b 0\r\n'
+            : '#!/bin/sh\nif [ "$1" = "--version" ]; then echo "Python 3.11.0"; fi\nexit 0\n';
+
+    fs.writeFileSync(pythonPath, script);
+    fs.chmodSync(pythonPath, 0o755);
+    return pythonPath;
 }
 
 /* 	test that the external python environment is set up with hatchet.
@@ -93,6 +110,51 @@ suite('Environment Tests', () => {
 
         assert.ok(extensionContext.workspaceState.get<string>('pythonWithHatchetPath'));
         assert.strictEqual(extensionContext.workspaceState.get<string>('pythonWithHatchetPath'), pythonPath);
+    });
+
+    test('Finds Python when module imports succeed without stdout', async function () {
+        if (process.platform === 'win32') {
+            this.skip();
+        }
+
+        const previousPython3RootDir = process.env.Python3_ROOT_DIR;
+        const fakePythonRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'profile viewer python root '));
+        const fakePythonPath = createFakePython(fakePythonRoot);
+
+        try {
+            process.env.Python3_ROOT_DIR = fakePythonRoot;
+
+            const pythonPath = await getPythonPath(['hatchet', 'numpy']);
+
+            assert.strictEqual(pythonPath, fakePythonPath);
+        } finally {
+            if (previousPython3RootDir === undefined) {
+                delete process.env.Python3_ROOT_DIR;
+            } else {
+                process.env.Python3_ROOT_DIR = previousPython3RootDir;
+            }
+        }
+    });
+
+    test('Configured Python path takes precedence over cached Python', async () => {
+        const profileViewerConfig = vscode.workspace.getConfiguration('profileviewer');
+        const previousConfiguredPython = profileViewerConfig.inspect<string | null>('pythonPath')?.globalValue;
+        const previousCachedPython = extensionContext.workspaceState.get<string>('pythonWithHatchetPath');
+        const configuredPython = path.join(os.tmpdir(), 'configured python');
+        const cachedPython = path.join(os.tmpdir(), 'cached python');
+
+        try {
+            await extensionContext.workspaceState.update('pythonWithHatchetPath', cachedPython);
+            await profileViewerConfig.update('pythonPath', configuredPython, vscode.ConfigurationTarget.Global);
+
+            const pythonPath = await findPythonWithCache(extensionContext, ['hatchet'], true);
+
+            assert.strictEqual(pythonPath, configuredPython);
+            assert.strictEqual(extensionContext.workspaceState.get<string>('pythonWithHatchetPath'), configuredPython);
+        } finally {
+            await profileViewerConfig.update('pythonPath', previousConfiguredPython, vscode.ConfigurationTarget.Global);
+            await extensionContext.workspaceState.update('pythonWithHatchetPath', previousCachedPython);
+        }
     });
 });
 
