@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-        python-version: ['3.10', '3.11', '3.12']
+        python-version: ['3.10', '3.11']
         hatchet-version: ['1.4.1']
         vscode-version: ['1.84.2']
     runs-on: ${{ matrix.os }}
@@ -42,7 +42,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-        python-version: ['3.10', '3.11', '3.12']
+        python-version: ['3.10', '3.11']
         hatchet-version: ['1.4.1']
     runs-on: ${{ matrix.os }}
     steps:
