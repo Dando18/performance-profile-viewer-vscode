@@ -3,37 +3,78 @@ import { PROFILER_OUTPUT_TYPES } from './profileroutput';
 import { ProfileTreeEditor } from './profiletree';
 import { FlameGraphView } from './flamegraph';
 import { ProfilerTaskProvider } from './profilertasks';
+import { isGmonProfileBytes } from './parsers/gprof';
 
 const SCHEME_TO_VIEW_TYPE: { [key: string]: string } = {
     profileTree: ProfileTreeEditor.viewType,
     profileFlameGraph: FlameGraphView.viewType,
 };
 
-function selectPathAndOpen(source: string, expectsDir: boolean, schemes: string[]): void {
+async function selectPathAndOpen(source: string, expectsDir: boolean, schemes: string[]): Promise<void> {
     /* prompt user to select path to profile */
-    vscode.window
-        .showOpenDialog({
-            canSelectFiles: !expectsDir,
-            canSelectFolders: expectsDir,
-            canSelectMany: false,
-            openLabel: 'Select Profile',
-            title: 'Select Profile',
-        })
-        .then((fileUris: vscode.Uri[] | undefined) => {
-            if (fileUris && fileUris.length > 0) {
-                const filePath = fileUris[0].fsPath;
-                const viewColumns = [vscode.ViewColumn.One, vscode.ViewColumn.Beside];
-                let viewCounter = 0;
-                for (const scheme of schemes) {
-                    const profileUri = getProfileUri(filePath, source, 'file');
-                    const editorId = SCHEME_TO_VIEW_TYPE[scheme];
-                    const column = viewColumns[viewCounter % viewColumns.length];
-                    viewCounter += 1;
+    const fileUris = await vscode.window.showOpenDialog({
+        canSelectFiles: !expectsDir,
+        canSelectFolders: expectsDir,
+        canSelectMany: false,
+        openLabel: 'Select Profile',
+        title: 'Select Profile',
+    });
 
-                    vscode.commands.executeCommand('vscode.openWith', profileUri, editorId, column);
-                }
-            }
-        });
+    if (!fileUris || fileUris.length === 0) {
+        return;
+    }
+
+    const profileQuery = await getProfileQuery(fileUris[0], source);
+    if (!profileQuery) {
+        return;
+    }
+
+    const filePath = fileUris[0].fsPath;
+    const viewColumns = [vscode.ViewColumn.One, vscode.ViewColumn.Beside];
+    let viewCounter = 0;
+    for (const scheme of schemes) {
+        const profileUri = getProfileUri(filePath, profileQuery, 'file');
+        const editorId = SCHEME_TO_VIEW_TYPE[scheme];
+        const column = viewColumns[viewCounter % viewColumns.length];
+        viewCounter += 1;
+
+        vscode.commands.executeCommand('vscode.openWith', profileUri, editorId, column);
+    }
+}
+
+async function getProfileQuery(profileUri: vscode.Uri, profileType: string): Promise<any | undefined> {
+    const query: any = { type: profileType };
+
+    if (profileType !== 'gprof') {
+        return query;
+    }
+
+    const contents = await vscode.workspace.fs.readFile(profileUri);
+    if (!isGmonProfileBytes(contents)) {
+        return query;
+    }
+
+    const executableUris = await vscode.window.showOpenDialog({
+        canSelectFiles: true,
+        canSelectFolders: false,
+        canSelectMany: false,
+        openLabel: 'Select Executable',
+        title: 'Select Executable for gmon.out',
+    });
+
+    if (!executableUris || executableUris.length === 0) {
+        vscode.window.showErrorMessage('Opening raw gmon.out requires selecting the executable that produced it.');
+        return undefined;
+    }
+
+    query.executablePath = executableUris[0].fsPath;
+    return query;
+}
+
+function openProfilePath(source: string, expectsDir: boolean, schemes: string[]): void {
+    selectPathAndOpen(source, expectsDir, schemes).catch((error: Error) => {
+        vscode.window.showErrorMessage(`Error opening profile: ${error.message}`);
+    });
 }
 
 function openProfile(schemes: string[]): void {
@@ -47,16 +88,16 @@ function openProfile(schemes: string[]): void {
             if (profileType) {
                 const isDirectory =
                     PROFILER_OUTPUT_TYPES[profileType as keyof typeof PROFILER_OUTPUT_TYPES].isDirectory;
-                selectPathAndOpen(profileType, isDirectory, schemes);
+                openProfilePath(profileType, isDirectory, schemes);
             }
         });
 }
 
-function getProfileUri(fpath: string | vscode.Uri, profileType: string, scheme: string): vscode.Uri {
+function getProfileUri(fpath: string | vscode.Uri, query: any, scheme: string): vscode.Uri {
     return vscode.Uri.from({
         scheme: scheme,
         path: fpath.toString(),
-        query: JSON.stringify({ type: profileType }),
+        query: JSON.stringify(query),
     });
 }
 

@@ -61,12 +61,13 @@ See the [Profiling Documentation](docs/profiling.md) for more details.
 
 Performance Profile Viewer uses the Python library
 [Hatchet](https://hatchet.readthedocs.io/en/latest/)
-to parse and process the different profile types.
-You must install it in order to use the extension.
-Currently, the extension has been tested with Hatchet version 1.3.1 to 1.4.0
-and Python 3.8 to 3.12.
+to parse and process most profile types.
+You must install it in order to use the extension for those profile types.
+Raw `gmon.out` support requires a local GNU `gprof` command.
+Currently, the extension has been tested with Hatchet version 1.4.1
+and Python 3.10 to 3.12.
 Assuming there is a valid Python installation, then it can be installed with
-`pip install hatchet==1.4.0`.
+`pip install hatchet==1.4.1`.
 
 ## Extension Settings
 

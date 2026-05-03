@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { spawn, ChildProcess } from 'child_process';
 import { getPythonPath, findPythonWithCache } from './util';
+import { readGprofProfile } from './parsers/gprof';
 
 /**
  * Types of supported profiler outputs and their properties.
@@ -293,9 +294,57 @@ export class ProfilerOutput implements vscode.Disposable {
         });
     }
 
+    private getTreeFromGprof(): Thenable<ProfilerOutputTree> {
+        const query = this.uri.query ? JSON.parse(this.uri.query) : { type: this.type };
+        return readGprofProfile(this.uri, {
+            executablePath: query.executablePath,
+            runGprof: (executablePath: string, profilePath: string) => this.runGprof(executablePath, profilePath),
+        }).then((tree: any) => ProfilerOutputTree.fromObject(tree));
+    }
+
+    private runGprof(executablePath: string, profilePath: string): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            this.process = spawn('gprof', ['-b', executablePath, profilePath]);
+
+            let stdout = '';
+            if (this.process.stdout) {
+                this.process.stdout.on('data', (data: Buffer) => {
+                    stdout += data.toString();
+                });
+            }
+
+            let stderr = '';
+            if (this.process.stderr) {
+                this.process.stderr.on('data', (data: Buffer) => {
+                    stderr += data.toString();
+                });
+            }
+
+            this.process.on('error', (err: Error) => {
+                reject(
+                    new Error(
+                        `Unable to run gprof. Make sure GNU gprof is installed and available on PATH. ${err.message}`
+                    )
+                );
+            });
+
+            this.process.on('close', (code: number) => {
+                if (code === 0) {
+                    resolve(stdout);
+                } else {
+                    reject(new Error(`gprof exited with code ${code}. ${stderr.trim()}`.trim()));
+                }
+            });
+        });
+    }
+
     public getTree(): Thenable<ProfilerOutputTree> {
         if (this.type === 'json') {
             return this.getTreeFromJson();
+        }
+
+        if (this.type === 'gprof') {
+            return this.getTreeFromGprof();
         }
 
         return new Promise<ProfilerOutputTree>((resolve, reject) => {

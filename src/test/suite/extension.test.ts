@@ -8,6 +8,40 @@ import { ProfilerOutput } from '../../profileroutput';
 import { ProfileTreeEditor } from '../../profiletree';
 import { FlameGraphView } from '../../flamegraph';
 import { getPythonPath, findPythonWithCache, getHatchetVersion } from '../../util';
+import { isGmonProfileBytes, parseGprofText, readGprofProfileBytes } from '../../parsers/gprof';
+
+const SIMPLE_GPROF_TEXT = `
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total
+ time   seconds   seconds    calls  ms/call  ms/call  name
+100.00      0.03     0.03     1001     0.03     0.03  leaf
+  0.00      0.03     0.00        1     0.00    29.97  branch
+
+                        Call graph
+
+index % time    self  children    called     name
+                0.00    0.00       1/1001        main [2]
+                0.03    0.00    1000/1001        branch [3]
+[1]    100.0    0.03    0.00    1001         leaf [1]
+-----------------------------------------------
+                                                 <spontaneous>
+[2]    100.0    0.00    0.03                 main [2]
+                0.00    0.03       1/1           branch [3]
+                0.00    0.00       1/1001        leaf [1]
+-----------------------------------------------
+                0.00    0.03       1/1           main [2]
+[3]     99.9    0.00    0.03       1         branch [3]
+                0.03    0.00    1000/1001        leaf [1]
+-----------------------------------------------
+
+Index by function name
+`;
+
+function hasAttribute(node: any, attribute: string): boolean {
+    return Boolean(node.attributes[attribute]) || node.children.some((child: any) => hasAttribute(child, attribute));
+}
 
 /* 	test that the external python environment is set up with hatchet.
 	test that all the tools to find and interact with this environment work.
@@ -59,6 +93,98 @@ suite('Environment Tests', () => {
 
         assert.ok(extensionContext.workspaceState.get<string>('pythonWithHatchetPath'));
         assert.strictEqual(extensionContext.workspaceState.get<string>('pythonWithHatchetPath'), pythonPath);
+    });
+});
+
+suite('GProf Parser Tests', () => {
+    test('Parse GProf call graph text', () => {
+        const tree = parseGprofText(SIMPLE_GPROF_TEXT);
+
+        assert.strictEqual(tree.length, 1);
+        assert.strictEqual(tree[0].name, 'main');
+        assert.strictEqual(tree[0].metrics['time (inc)'], 0.03);
+        assert.strictEqual(tree[0].children[0].name, 'leaf');
+        assert.strictEqual(tree[0].children[1].name, 'branch');
+        assert.strictEqual(tree[0].attributes.hot_path, true);
+        assert.strictEqual(tree[0].children[1].children[0].attributes.duplicate, true);
+    });
+
+    test('Parse C++ function names', () => {
+        const tree = parseGprofText(`
+Call graph
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]    100.0    0.01    0.00       1         std::vector<double, std::allocator<double> >::operator[](unsigned long) const [1]
+-----------------------------------------------
+`);
+
+        assert.strictEqual(
+            tree[0].name,
+            'std::vector<double, std::allocator<double> >::operator[](unsigned long) const'
+        );
+    });
+
+    test('Parse multiple spontaneous roots', () => {
+        const tree = parseGprofText(`
+Call graph
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]     75.0    0.03    0.00       1         alpha [1]
+-----------------------------------------------
+                                                 <spontaneous>
+[2]     25.0    0.01    0.00       1         beta [2]
+-----------------------------------------------
+`);
+
+        assert.deepStrictEqual(
+            tree.map(node => node.name),
+            ['alpha', 'beta']
+        );
+    });
+
+    test('Stops recursive cycles', () => {
+        const tree = parseGprofText(`
+Call graph
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]    100.0    0.01    0.02       1         main [1]
+                0.01    0.01       1/1           alpha <cycle 1> [2]
+-----------------------------------------------
+                0.01    0.01       1/1           main [1]
+                0.00    0.01       1             beta <cycle 1> [3]
+[2]     66.7    0.01    0.01       1         alpha <cycle 1> [2]
+                0.00    0.01       1             beta <cycle 1> [3]
+-----------------------------------------------
+                0.00    0.01       1             alpha <cycle 1> [2]
+[3]     33.3    0.00    0.01       1         beta <cycle 1> [3]
+                0.01    0.01       1             alpha <cycle 1> [2]
+-----------------------------------------------
+`);
+
+        assert.strictEqual(hasAttribute(tree[0], 'recursive'), true);
+    });
+
+    test('Rejects flat-profile-only text', () => {
+        assert.throws(() => parseGprofText('Flat profile:\nleaf 0.01\n'), /call graph/i);
+    });
+
+    test('Detects raw gmon.out and parses mocked gprof output', async () => {
+        const gmonBytes = Buffer.from([0x67, 0x6d, 0x6f, 0x6e, 0x00]);
+        assert.strictEqual(isGmonProfileBytes(gmonBytes), true);
+
+        const tree = await readGprofProfileBytes(gmonBytes, 'gmon.out', {
+            executablePath: 'sample',
+            runGprof: async (executablePath: string, profilePath: string) => {
+                assert.strictEqual(executablePath, 'sample');
+                assert.strictEqual(profilePath, 'gmon.out');
+                return SIMPLE_GPROF_TEXT;
+            },
+        });
+
+        assert.strictEqual(tree[0].name, 'main');
     });
 });
 
@@ -120,21 +246,33 @@ suite('Profile Parsing Tests', () => {
         assert.ok(Math.abs(tree.getMaxInclusiveTime() - 5889901.5) < 0.0001);
     });
 
-    /* TODO: fix this test; it works on any machine and environment I test it on
-     * but fails on the GitHub Actions runner. */
-    /*test('Open GProf Profile', async () => {
-		assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+    test('Open GProf Profile', async () => {
+        assert.notEqual(vscode.workspace.workspaceFolders, undefined);
 
-		const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'gprof', 'gprof.dot');
-		let profile = new ProfilerOutput(fpath, "gprof", false);
+        const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'gprof', 'gprof.txt');
+        let profile = new ProfilerOutput(fpath, 'gprof', false);
 
-		assert.strictEqual(profile.type, "gprof");
-		assert.strictEqual(profile.isDirectory, false);
+        assert.strictEqual(profile.type, 'gprof');
+        assert.strictEqual(profile.isDirectory, false);
 
-		let tree = await profile.getTree();
-		assert.strictEqual(tree.roots.length, 7);
-		assert.ok(Math.abs(tree.getMaxInclusiveTime() - 97.95) < 0.0001);
-	});*/
+        let tree = await profile.getTree();
+        assert.strictEqual(tree.roots.length, 1);
+        assert.ok(Math.abs(tree.getMaxInclusiveTime() - 0.03) < 0.0001);
+    });
+
+    test('Open legacy GProf DOT Profile', async () => {
+        assert.notEqual(vscode.workspace.workspaceFolders, undefined);
+
+        const fpath = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, 'gprof', 'gprof.dot');
+        let profile = new ProfilerOutput(fpath, 'gprof', false);
+
+        assert.strictEqual(profile.type, 'gprof');
+        assert.strictEqual(profile.isDirectory, false);
+
+        let tree = await profile.getTree();
+        assert.ok(tree.roots.length > 0);
+        assert.ok(Math.abs(tree.getMaxInclusiveTime() - 97.95) < 0.0001);
+    });
 
     test('Open Timemory Profile', async () => {
         assert.notEqual(vscode.workspace.workspaceFolders, undefined);
