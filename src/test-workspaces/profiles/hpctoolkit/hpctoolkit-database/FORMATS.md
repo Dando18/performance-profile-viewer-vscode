@@ -17,11 +17,11 @@ performance metric taxonomies.
 
 Table of contents:
 
--   [Common properties for all formats (READ FIRST)](#common-properties-for-all-formats-read-first)
--   [`meta.db` v4.0](#metadb-version-40)
--   [`profile.db` v4.0](#profiledb-version-40)
--   [`cct.db` v4.0](#cctdb-version-40)
--   [`trace.db` v4.0](#tracedb-version-40)
+- [Common properties for all formats (READ FIRST)](#common-properties-for-all-formats-read-first)
+- [`meta.db` v4.0](#metadb-version-40)
+- [`profile.db` v4.0](#profiledb-version-40)
+- [`cct.db` v4.0](#cctdb-version-40)
+- [`trace.db` v4.0](#tracedb-version-40)
 
 ---
 
@@ -44,49 +44,48 @@ the structure in a notation similar to C's `struct`:
 | `13:` | Ty2  | `field2`      | 4.1  | Description of the value in `field2`   |
 | `15:` |      | **END**       |      | Extendable, see [Reader compatibility] |
 
--   The initial **ALIGNMENT** row indicates the minimum alignment of the absolute
-    file offset of the beginning of the structure. For instance, `A 4` in the
-    above table indicates that `field1` is placed on a 4-byte boundary within the
-    file. See [Alignment properties] for more details.
+- The initial **ALIGNMENT** row indicates the minimum alignment of the absolute
+  file offset of the beginning of the structure. For instance, `A 4` in the
+  above table indicates that `field1` is placed on a 4-byte boundary within the
+  file. See [Alignment properties] for more details.
 
--   **Hex** lists the constant byte-offset from the beginning of the structure to
-    the beginning of the field, in hexadecimal. Fields are normally packed with
-    no padding in-between, if there may be a gap between fields an empty row is
-    inserted into the table for readability. If the offset is not constant for a
-    field no value is listed.
+- **Hex** lists the constant byte-offset from the beginning of the structure to
+  the beginning of the field, in hexadecimal. Fields are normally packed with
+  no padding in-between, if there may be a gap between fields an empty row is
+  inserted into the table for readability. If the offset is not constant for a
+  field no value is listed.
 
--   **Type** lists the interpretation of the field's bytes, along with
-    (implicitly) its size. The standard types are as follows:
+- **Type** lists the interpretation of the field's bytes, along with
+  (implicitly) its size. The standard types are as follows:
+    - u`N` is a unsigned integer of `N` bits.
+      Multi-byte integers are laid out in little-endian order.
+    - f64 is an IEEE 754 double-precision floating-point number, laid out in
+      little-endian order (ie. sign byte comes last).
+    - `Ty`[`N`] is an array of `N` elements of type `Ty`. There is no padding
+      between elements (ie. the stride is equal to the total size of `Ty`).
+      `N` may refer to a sibling field, or may be `...` if the size is defined
+      in the **Description**.
+    - `Ty`\* is a u64, but additionally the value is the absolute byte-offset of a
+      structure of type `Ty` (ie. a pointer to `Ty`). The value is aligned to the
+      minimum alignment of `Ty`, as defined in [Alignment properties].
+    - char\* is a u64, but additionally the value is the absolute byte-offset of
+      the start byte of a null-terminated UTF-8 string. The value is generally
+      unaligned.
 
-    -   u`N` is a unsigned integer of `N` bits.
-        Multi-byte integers are laid out in little-endian order.
-    -   f64 is an IEEE 754 double-precision floating-point number, laid out in
-        little-endian order (ie. sign byte comes last).
-    -   `Ty`[`N`] is an array of `N` elements of type `Ty`. There is no padding
-        between elements (ie. the stride is equal to the total size of `Ty`).
-        `N` may refer to a sibling field, or may be `...` if the size is defined
-        in the **Description**.
-    -   `Ty`\* is a u64, but additionally the value is the absolute byte-offset of a
-        structure of type `Ty` (ie. a pointer to `Ty`). The value is aligned to the
-        minimum alignment of `Ty`, as defined in [Alignment properties].
-    -   char\* is a u64, but additionally the value is the absolute byte-offset of
-        the start byte of a null-terminated UTF-8 string. The value is generally
-        unaligned.
+- **Name** gives a short name to refer to the field in further descriptions.
 
--   **Name** gives a short name to refer to the field in further descriptions.
+- **Ver.** lists the first version the field first appeared. Note that if the
+  offset of the field changed over a major version, this number is will not be
+  updated to match the new major version.
 
--   **Ver.** lists the first version the field first appeared. Note that if the
-    offset of the field changed over a major version, this number is will not be
-    updated to match the new major version.
+- **Description** describes the value of the field. Longer and additional
+  descriptions are listed after the table in separate paragraphs or lists.
 
--   **Description** describes the value of the field. Longer and additional
-    descriptions are listed after the table in separate paragraphs or lists.
-
--   The final **END** row lists the total size of the structure. If this
-    structure is used in an array, this is the offset of the first field in the
-    following array element. The **Description** indicates whether the structure
-    may be modified in later minor versions (expandable) or not (fixed), see
-    [Reader compatibility] for more details.
+- The final **END** row lists the total size of the structure. If this
+  structure is used in an array, this is the offset of the first field in the
+  following array element. The **Description** indicates whether the structure
+  may be modified in later minor versions (expandable) or not (fixed), see
+  [Reader compatibility] for more details.
 
 ### Common file structure
 
@@ -114,19 +113,19 @@ file, see [Reader compatibility] for implications.
 `format` identifies the specific format for the file, and always reads as a
 4-character ASCII string (no terminator). Specifically:
 
--   `meta` for [`meta.db` v4.0](#metadb-version-40)
--   `prof` for [`profile.db` v4.0](#profiledb-version-40)
--   `ctxt` for [`cct.db` v4.0](#cctdb-version-40)
--   `trce` for [`trace.db` v4.0](#tracedb-version-40)
+- `meta` for [`meta.db` v4.0](#metadb-version-40)
+- `prof` for [`profile.db` v4.0](#profiledb-version-40)
+- `ctxt` for [`cct.db` v4.0](#cctdb-version-40)
+- `trce` for [`trace.db` v4.0](#tracedb-version-40)
 
 Additional notes:
 
--   The structure of file headers, including the value for `magic`, does not
-    change across major versions.
--   The values for `format` follow the same rules as enumerations as defined in
-    [Reader compatibility].
--   `majorVersion` is consistent across all `*.db` files in one database.
-    `minorVersion` is not in general.
+- The structure of file headers, including the value for `magic`, does not
+  change across major versions.
+- The values for `format` follow the same rules as enumerations as defined in
+  [Reader compatibility].
+- `majorVersion` is consistent across all `*.db` files in one database.
+  `minorVersion` is not in general.
 
 The remainder of the file header is made up of pointers of and sizes of
 contiguous regions of the file, hereafter termed sections. Many but not all
@@ -150,11 +149,11 @@ reading a large blob of related information.
 
 Additional notes:
 
--   `p*` fields are aligned based on the alignment of the section header
-    structure, unless otherwise noted.
--   The order of sections in the file and the order they are listed in the header
-    may differ, do not rely on any section ordering properties without checking
-    first.
+- `p*` fields are aligned based on the alignment of the section header
+  structure, unless otherwise noted.
+- The order of sections in the file and the order they are listed in the header
+  may differ, do not rely on any section ordering properties without checking
+  first.
 
 ### Alignment properties
 
@@ -165,25 +164,25 @@ segments, to support this fields are aligned to improve access for
 performance-critical readers. All types have a minimum alignment that is
 respected (unless otherwise noted), defined as follows:
 
--   Integers (u`N`) have a minimum alignment equal to their width (`N/8`).
-    For example, u32 is 4-byte aligned.
--   Floating point numbers (f64) are 8-byte aligned.
--   Arrays (`Ty`[`N`]) have the same alignment as their elements (`Ty`). In this
-    case the total size of `Ty` is a multiple of the alignment of `Ty`, so there
-    is no implicit padding between elements.
--   Pointers (`Ty`_ and char_) are 8-byte aligned (same as u64).
--   Structures listed with structure tables have the alignment listed in their
-    initial **ALIGNMENT** row. In general this is at least the alignment of all
-    contained fields.
+- Integers (u`N`) have a minimum alignment equal to their width (`N/8`).
+  For example, u32 is 4-byte aligned.
+- Floating point numbers (f64) are 8-byte aligned.
+- Arrays (`Ty`[`N`]) have the same alignment as their elements (`Ty`). In this
+  case the total size of `Ty` is a multiple of the alignment of `Ty`, so there
+  is no implicit padding between elements.
+- Pointers (`Ty`_ and char_) are 8-byte aligned (same as u64).
+- Structures listed with structure tables have the alignment listed in their
+  initial **ALIGNMENT** row. In general this is at least the alignment of all
+  contained fields.
 
 Note that 8-byte alignment is the maximum possible alignment.
 
 The following fields are not always aligned, see the notes in their defining
 sections for recommendations on how to achieve performance in these cases:
 
--   Performance data arrays in [Profile-Major][PSVB] and
-    [Context-Major Sparse Value Block][CSVB], and
--   The array in a [trace line][THsec].
+- Performance data arrays in [Profile-Major][PSVB] and
+  [Context-Major Sparse Value Block][CSVB], and
+- The array in a [trace line][THsec].
 
 [PSVB]: #profile-major-sparse-value-block
 [CSVB]: #context-major-sparse-value-block
@@ -199,10 +198,10 @@ compatibility needed or available by inspecting the major and minor version
 numbers in the [Common file structure]. Specifically, we define two kinds of
 compatibility, taken from the reader's perspective:
 
--   _Backward compatibility_, when the reader (eg. v4.5) is a newer version than
-    the writer of the file (eg. v4.3).
--   _Forward compatibility_, when the reader (eg. v4.5) is an older version than
-    the writer of the file (eg. v4.7).
+- _Backward compatibility_, when the reader (eg. v4.5) is a newer version than
+  the writer of the file (eg. v4.3).
+- _Forward compatibility_, when the reader (eg. v4.5) is an older version than
+  the writer of the file (eg. v4.7).
 
 Backward compatibility is implemented by the reader when required, in this case
 the reader simply does not access fields that were not present in the listed
@@ -212,14 +211,14 @@ reader is responsible for implementing any differences.
 Forward compatibility is implemented by the format specification and is only
 available across minor versions. For readers, this means:
 
--   All fields supported by the reader will be accessible, but fields added
-    later than the reader's supported version will not be accessible.
--   Readers must ignore or error unknown enumeration values. This will not affect
-    the availability of any fields. The reader is responsible for synthesizing a
-    fallback result from available data.
--   Readers must always use the saved structure size for "expandable" structures
-    (described below) as the stride for arrays, rather than the size in the
-    reader's supported version.
+- All fields supported by the reader will be accessible, but fields added
+  later than the reader's supported version will not be accessible.
+- Readers must ignore or error unknown enumeration values. This will not affect
+  the availability of any fields. The reader is responsible for synthesizing a
+  fallback result from available data.
+- Readers must always use the saved structure size for "expandable" structures
+  (described below) as the stride for arrays, rather than the size in the
+  reader's supported version.
 
 "Expandable" structures may increase in size over the course of minor versions,
 the converse are "fixed" structures which do not. The status of any particular
@@ -228,13 +227,13 @@ structure is noted in the **END** row of the structure's table.
 The format specification relies on the following restrictions to preserve
 forward compatibility to the greatest extent possible:
 
--   Fields and enumeration values must never be removed, replaced, or change
-    meaning in ways that would break older readers.
--   The presence or interpretation of fields must not depend on enumeration
-    values.
--   Fields may be added in any previously uninterpreted region: in "gaps" between
-    previous fields or at the end of the structure if it is expandable.
--   Enumeration values may be added in previously unallocated values.
+- Fields and enumeration values must never be removed, replaced, or change
+  meaning in ways that would break older readers.
+- The presence or interpretation of fields must not depend on enumeration
+  values.
+- Fields may be added in any previously uninterpreted region: in "gaps" between
+  previous fields or at the end of the structure if it is expandable.
+- Enumeration values may be added in previously unallocated values.
 
 A breakage of any of these restrictions requires a major version bump, adding
 new fields or enumeration values requires a minor version bump.
@@ -245,9 +244,9 @@ new fields or enumeration values requires a minor version bump.
 
 `meta.db` is a binary file listing various metadata for the database, including:
 
--   Performance metrics for the metrics measured at application run-time,
--   Calling contexts for metric values listed in sibling `*.db` files, and
--   A human-readable description of the database's contents.
+- Performance metrics for the metrics measured at application run-time,
+- Calling contexts for metric values listed in sibling `*.db` files, and
+- A human-readable description of the database's contents.
 
 The `meta.db` file starts with the following header:
 
@@ -276,9 +275,9 @@ The `meta.db` file ends with an 8-byte footer, reading `_meta.db` in ASCII.
 
 Additional notes:
 
--   The Common String Table section has no particular interpretation, it is used
-    as a section to store strings for the [Load Modules section][LMsec],
-    the [Source Files section][SFsec], and the [Functions section][Fnsec].
+- The Common String Table section has no particular interpretation, it is used
+  as a section to store strings for the [Load Modules section][LMsec],
+  the [Source Files section][SFsec], and the [Functions section][Fnsec].
 
 ## `meta.db` General Properties section
 
@@ -297,8 +296,8 @@ contained may change without warning.
 
 Additional notes:
 
--   The strings pointed to by `pTitle` and `pDescription` are fully contained
-    within the General Properties section, including the terminating NUL byte.
+- The strings pointed to by `pTitle` and `pDescription` are fully contained
+  within the General Properties section, including the terminating NUL byte.
 
 ## `meta.db` Hierarchical Identifier Names section
 
@@ -325,8 +324,8 @@ human-readable name for the Identifier kind `kind`, where `kind` is part of a
 
 Additional notes:
 
--   The strings pointed to `ppNames[...]` are fully contained within the
-    Hierarchical Identifier Names section, including the terminating NUL.
+- The strings pointed to `ppNames[...]` are fully contained within the
+  Hierarchical Identifier Names section, including the terminating NUL.
 
 ## `meta.db` Performance Metrics section
 
@@ -334,17 +333,17 @@ Additional notes:
 > application runtime, and the analysis performed by HPCToolkit to generate the
 > metric values within `profile.db` and `cct.db`. In summary:
 >
-> -   Performance measurements for an application thread are first attributed to
->     contexts, listed in the [Context Tree section](#metadb-context-tree-section).
->     These are the raw metric values.
-> -   Propagated metric values are generated for each context by summing values
->     attributed to children contexts, within the measurements for a single
->     application thread. Which children are included in this sum is indicated
->     by the `*pScope` {PS} structure.
-> -   Summary statistic values are generated for each context from the
->     propagated metric values for each application thread, by first applying
->     `*pFormula` to each value and then combining via `combine`. This generates
->     a single statistic value for each context.
+> - Performance measurements for an application thread are first attributed to
+>   contexts, listed in the [Context Tree section](#metadb-context-tree-section).
+>   These are the raw metric values.
+> - Propagated metric values are generated for each context by summing values
+>   attributed to children contexts, within the measurements for a single
+>   application thread. Which children are included in this sum is indicated
+>   by the `*pScope` {PS} structure.
+> - Summary statistic values are generated for each context from the
+>   propagated metric values for each application thread, by first applying
+>   `*pFormula` to each value and then combining via `combine`. This generates
+>   a single statistic value for each context.
 
 The Performance Metrics section starts with the following header:
 
@@ -402,9 +401,9 @@ The combination function `combine` is an enumeration with the following possible
 values (the name after `/` is the matching name for `inputs:combine` in
 METRICS.yaml):
 
--   `0/sum`: Sum of input values
--   `1/min`: Minimum of input values
--   `2/max`: Maximum of input values
+- `0/sum`: Sum of input values
+- `1/min`: Minimum of input values
+- `2/max`: Maximum of input values
 
 > As noted before, propagated metric values are generated by summing the
 > measured metric values from some or all of the descendants of a context, as
@@ -434,23 +433,23 @@ METRICS.yaml):
 
 The propagation scope `type` is an enumeration with the following values:
 
--   `0`: Custom propagation scope, not defined in the meta.db.
+- `0`: Custom propagation scope, not defined in the meta.db.
 
--   `1`: Standard "point" propagation scope. No propagation occurs, all metric
-    values are recorded as measured.
+- `1`: Standard "point" propagation scope. No propagation occurs, all metric
+  values are recorded as measured.
 
     > The canonical `*pScopeName` for this case is "point".
 
--   `2`: Standard "execution" propagation scope. Propagation always occurs, the
-    propagated value sums values measured from all descendants without exception.
+- `2`: Standard "execution" propagation scope. Propagation always occurs, the
+  propagated value sums values measured from all descendants without exception.
 
     > The canonical `*pScopeName` for this case is "execution". This case is
     > often used for inclusive metric costs.
 
--   `3`: Transitive propagation scope. Propagation occurs from every context to
-    its parent when the `propagationIndex`th bit is set in the
-    [context's `propagation` bitmask][CT], and to further ancestors transitively
-    under the same condition.
+- `3`: Transitive propagation scope. Propagation occurs from every context to
+  its parent when the `propagationIndex`th bit is set in the
+  [context's `propagation` bitmask][CT], and to further ancestors transitively
+  under the same condition.
 
     > An example transitive propagation scope is named "function," its propagated
     > values sum measurements from all descendants not separated by a call, in
@@ -462,22 +461,22 @@ The propagation scope `type` is an enumeration with the following values:
 
 Additional notes:
 
--   Matching the size of the [context's `propagation` field][CT],
-    `propagationIndex` is always less than 16.
--   The arrays pointed to by `pMetrics`, `pScopes` and `pSummaries` are fully
-    contained within the Performance Metrics section.
--   The strings pointed to by `pName`, `pScope` and `pFormula` are fully contained
-    within the Performance Metrics section, including the terminating NUL.
--   The format and interpretation of `*pFormula` matches the `inputs:formula` key
-    in METRICS.yaml, see there for details.
--   `propMetricId` is the metric identifier used in `profile.db` and `cct.db` for
-    propagated metric values for the given `*pName` and `*pScope`.
--   `statMetricId` is the metric identifier used in `profile.db` summary
-    profiles for summary statistic values for the given `*pName`, `*pScope`,
-    `*pFormula` and `combine`.
--   The stride of `*pMetrics`, `*pScopes` and `*pSummaries` is `szMetric`,
-    `szScope` and `szSummary`, respectively. For forward compatibility these
-    values should be read and used whenever accessing these arrays.
+- Matching the size of the [context's `propagation` field][CT],
+  `propagationIndex` is always less than 16.
+- The arrays pointed to by `pMetrics`, `pScopes` and `pSummaries` are fully
+  contained within the Performance Metrics section.
+- The strings pointed to by `pName`, `pScope` and `pFormula` are fully contained
+  within the Performance Metrics section, including the terminating NUL.
+- The format and interpretation of `*pFormula` matches the `inputs:formula` key
+  in METRICS.yaml, see there for details.
+- `propMetricId` is the metric identifier used in `profile.db` and `cct.db` for
+  propagated metric values for the given `*pName` and `*pScope`.
+- `statMetricId` is the metric identifier used in `profile.db` summary
+  profiles for summary statistic values for the given `*pName`, `*pScope`,
+  `*pFormula` and `combine`.
+- The stride of `*pMetrics`, `*pScopes` and `*pSummaries` is `szMetric`,
+  `szScope` and `szSummary`, respectively. For forward compatibility these
+  values should be read and used whenever accessing these arrays.
 
 ## `meta.db` Load Modules section
 
@@ -498,10 +497,10 @@ The Load Modules section starts with the following header:
 
 Additional notes:
 
--   The array pointed to by `pModules` is completely within the Load Modules
-    section.
--   The stride of `*pModules` is `szModule`, for forwards compatibility this
-    should always be read and used as the stride when accessing `*pModules`.
+- The array pointed to by `pModules` is completely within the Load Modules
+  section.
+- The stride of `*pModules` is `szModule`, for forwards compatibility this
+  should always be read and used as the stride when accessing `*pModules`.
 
 ### Load Module Specification
 
@@ -517,9 +516,9 @@ A Load Module Specification refers to the following structure:
 
 Additional notes:
 
--   The string pointed to by `pPath` is completely within the
-    [Common String Table section](#metadb-version-40), including the terminating
-    NUL byte.
+- The string pointed to by `pPath` is completely within the
+  [Common String Table section](#metadb-version-40), including the terminating
+  NUL byte.
 
 ## `meta.db` Source Files section
 
@@ -540,10 +539,10 @@ The Source Files section starts with the following header:
 
 Additional notes:
 
--   The array pointed to by `pFiles` is completely within the Source Files
-    section.
--   The stride of `*pFiles` is `szFile`, for forwards compatibility this should
-    always be read and used as the stride when accessing `*pFiles`.
+- The array pointed to by `pFiles` is completely within the Source Files
+  section.
+- The stride of `*pFiles` is `szFile`, for forwards compatibility this should
+  always be read and used as the stride when accessing `*pFiles`.
 
 ### Source File Specification
 
@@ -560,16 +559,16 @@ A Source File Specification refers to the following structure:
 {Flags} refers to an u32 bitfield with the following sub-fields (bit 0 is
 least significant):
 
--   Bit 0: `copied`. If 1, the source file was copied into the database and
-    should always be available. If 0, the source file was not copied and thus may
-    need to be searched for.
--   Bits 1-31: Reserved for future use.
+- Bit 0: `copied`. If 1, the source file was copied into the database and
+  should always be available. If 0, the source file was not copied and thus may
+  need to be searched for.
+- Bits 1-31: Reserved for future use.
 
 Additional notes:
 
--   The string pointed to by `pPath` is completely within the
-    [Common String Table section](#metadb-version-40), including the terminating
-    NUL byte.
+- The string pointed to by `pPath` is completely within the
+  [Common String Table section](#metadb-version-40), including the terminating
+  NUL byte.
 
 ## `meta.db` Functions section
 
@@ -596,10 +595,10 @@ The Functions section starts with the following header:
 
 Additional notes:
 
--   The array pointed to by `pFunctions` is completely within the Functions
-    section.
--   The stride of `*pFunctions` is `szFunction`, for forwards compatibility this
-    should always be read and used as the stride when accessing `*pFunctions`.
+- The array pointed to by `pFunctions` is completely within the Functions
+  section.
+- The stride of `*pFunctions` is `szFunction`, for forwards compatibility this
+  should always be read and used as the stride when accessing `*pFunctions`.
 
 ### Function Specification
 
@@ -621,12 +620,12 @@ A Function Specification refers to the following structure:
 
 Additional notes:
 
--   If not 0, the string pointed to by `pName` is completely within the
-    [Common String Table section](#metadb-version-40), including the terminating
-    NUL byte.
--   If not 0, `pModule` points within the [Load Module section](#metadb-load-module-section).
--   If not 0, `pFile` points within the [Source File section](#metadb-source-file-section).
--   At least one of `pName`, `pModule` and `pFile` will not be 0.
+- If not 0, the string pointed to by `pName` is completely within the
+  [Common String Table section](#metadb-version-40), including the terminating
+  NUL byte.
+- If not 0, `pModule` points within the [Load Module section](#metadb-load-module-section).
+- If not 0, `pFile` points within the [Source File section](#metadb-source-file-section).
+- At least one of `pName`, `pModule` and `pFile` will not be 0.
 
 ## `meta.db` Context Tree section
 
@@ -682,19 +681,19 @@ The Context Tree section starts with the following header:
 `entryPoint` is an enumeration of the following possible values (name in quotes
 is the associated canonical `*pPrettyName`):
 
--   `0` "unknown entry": No recognized outside caller.
+- `0` "unknown entry": No recognized outside caller.
 
     > This can occur when the unwind fails due to incomplete unwind information.
 
--   `1` "main thread": Setup code for the main thread.
--   `2` "application thread": Setup code for threads created by the application,
-    via `pthread_create` or similar.
+- `1` "main thread": Setup code for the main thread.
+- `2` "application thread": Setup code for threads created by the application,
+  via `pthread_create` or similar.
 
 Additional notes:
 
--   The string pointed to by `pPrettyName` is completely within the
-    [Common String Table section](#metadb-version-40), including the terminating
-    NUL byte.
+- The string pointed to by `pPrettyName` is completely within the
+  [Common String Table section](#metadb-version-40), including the terminating
+  NUL byte.
 
 {Ctx} above refers to the following structure:
 
@@ -718,10 +717,10 @@ Additional notes:
 `flex` contains a dynamic sequence of sub-fields, which are sequentially
 "packed" into the next unused bytes at the minimum alignment. In particular:
 
--   An u64 sub-field will always take the next full u8[8] "word" and never span
-    two words, but
--   Two u32 sub-fields will share a single u8[8] word even if an u64 sub-field
-    is between them in the packing order.
+- An u64 sub-field will always take the next full u8[8] "word" and never span
+  two words, but
+- Two u32 sub-fields will share a single u8[8] word even if an u64 sub-field
+  is between them in the packing order.
 
 The packing order is indicated by the index on `flex`, ie. `flex[1]` is the
 sub-field next in the packing order after `flex[0]`. This order still holds
@@ -730,15 +729,15 @@ even if not all fields are present for any particular instance.
 {Flags} above refers to an u8 bitfield with the following sub-fields (bit 0 is
 least significant):
 
--   Bit 0: `hasFunction`. If 1, the following sub-fields of `flex` are present:
-    -   `flex[0]:` [FS]\* `pFunction`: Function associated with this context
--   Bit 1: `hasSrcLoc`. If 1, the following sub-fields of `flex` are present:
-    -   `flex[1]:` [SFS]\* `pFile`: Source file associated with this context
-    -   `flex[2]:` u32 `line`: Associated source line in `pFile`
--   Bit 2: `hasPoint`. If 1, the following sub-fields of `flex` are present:
-    -   `flex[3]:` [LMS]\* `pModule`: Load module associated with this context
-    -   `flex[4]:` u64 `offset`: Associated byte offset in `*pModule`
--   Bits 3-7: Reserved for future use.
+- Bit 0: `hasFunction`. If 1, the following sub-fields of `flex` are present:
+    - `flex[0]:` [FS]\* `pFunction`: Function associated with this context
+- Bit 1: `hasSrcLoc`. If 1, the following sub-fields of `flex` are present:
+    - `flex[1]:` [SFS]\* `pFile`: Source file associated with this context
+    - `flex[2]:` u32 `line`: Associated source line in `pFile`
+- Bit 2: `hasPoint`. If 1, the following sub-fields of `flex` are present:
+    - `flex[3]:` [LMS]\* `pModule`: Load module associated with this context
+    - `flex[4]:` u64 `offset`: Associated byte offset in `*pModule`
+- Bits 3-7: Reserved for future use.
 
 [FS]: #function-specification
 [SFS]: #source-file-specification
@@ -746,49 +745,49 @@ least significant):
 
 `relation` is an enumeration with the following values:
 
--   `0`: This context's parent is an enclosing lexical context, eg. source line
-    within a function. Specifically, no call occurred.
--   `1`: This context's parent used a typical function call to reach this
-    context. The parent context is the source-level location of the call.
--   `2`: This context's parent used an inlined function call (ie. the call was
-    inlined by the compiler). The parent context is the source-level location of
-    the original call.
+- `0`: This context's parent is an enclosing lexical context, eg. source line
+  within a function. Specifically, no call occurred.
+- `1`: This context's parent used a typical function call to reach this
+  context. The parent context is the source-level location of the call.
+- `2`: This context's parent used an inlined function call (ie. the call was
+  inlined by the compiler). The parent context is the source-level location of
+  the original call.
 
 The lexical type `lexicalType` is an enumeration with the following values:
 
--   `0`: Function-like construct. If `hasFunction` is 1, `*pFunction` indicates
-    the function represented by this context. Otherwise the function for this
-    context is unknown (ie. an unknown function).
--   `1`: Loop construct. `*pFile` and `line` indicate the source line of the
-    loop header.
--   `2`: Source line construct. `*pFile` and `line` indicate the source line
-    represented by this context.
--   `3`: Single instruction. `*pModule` and `offset` indicate the first byte of the
-    instruction represented by this context.
+- `0`: Function-like construct. If `hasFunction` is 1, `*pFunction` indicates
+  the function represented by this context. Otherwise the function for this
+  context is unknown (ie. an unknown function).
+- `1`: Loop construct. `*pFile` and `line` indicate the source line of the
+  loop header.
+- `2`: Source line construct. `*pFile` and `line` indicate the source line
+  represented by this context.
+- `3`: Single instruction. `*pModule` and `offset` indicate the first byte of the
+  instruction represented by this context.
 
 Additional notes:
 
--   `propagation` is an extra field used to assist in defining some propagation
-    scopes, see the [Performance Metrics section][PMS] for details.
--   `ctxId` is always larger than 0, the value 0 is reserved to indicate the
-    global context (ie. an implicit context above and enclosing all others).
+- `propagation` is an extra field used to assist in defining some propagation
+  scopes, see the [Performance Metrics section][PMS] for details.
+- `ctxId` is always larger than 0, the value 0 is reserved to indicate the
+  global context (ie. an implicit context above and enclosing all others).
 
     > The global context is used to represent corner cases where there should be
     > no associated context. See notes on the usage of `ctxId` for details.
 
--   The arrays pointed to by `pRoots` and `pChildren` are completely within the
-    Context Tree section. The size of these arrays is given in `szRoots` or
-    `szChildren`, in bytes to allow for a singular read of all root/child
-    context structures.
--   `pChildren` is 0 if there are no child Contexts, `pRoots` is 0 if there are
-    no Contexts in this section period. `szChildren` and `szRoots` are 0 in these
-    cases respectively.
--   `pFunction` points within the [Function section](#metadb-function-section).
--   `pFile` points within the [Source File section](#metadb-source-file-section).
--   `pModule` points within the [Load Module section](#metadb-load-module-section).
--   The size of a single {Ctx} is dynamic but can be derived from `nFlexWords`.
-    For forward compatibility, readers should always read and use this to read
-    arrays of {Ctx} elements.
+- The arrays pointed to by `pRoots` and `pChildren` are completely within the
+  Context Tree section. The size of these arrays is given in `szRoots` or
+  `szChildren`, in bytes to allow for a singular read of all root/child
+  context structures.
+- `pChildren` is 0 if there are no child Contexts, `pRoots` is 0 if there are
+  no Contexts in this section period. `szChildren` and `szRoots` are 0 in these
+  cases respectively.
+- `pFunction` points within the [Function section](#metadb-function-section).
+- `pFile` points within the [Source File section](#metadb-source-file-section).
+- `pModule` points within the [Load Module section](#metadb-load-module-section).
+- The size of a single {Ctx} is dynamic but can be derived from `nFlexWords`.
+  For forward compatibility, readers should always read and use this to read
+  arrays of {Ctx} elements.
 
 ---
 
@@ -850,22 +849,22 @@ The Profile Info section starts with the following header:
 {Flags} above refers to a u32 bitfield with the following sub-fields (bit 0
 is least significant):
 
--   Bit 0: `isSummary`. If 0, this profile is a performance profile of the
-    application thread identified exactly by `*pIdTuple`. If 1, this profile is a
-    "summary profile" containing statistics across multiple measured application
-    threads where `*pIdTuple` lists common identifiers.
+- Bit 0: `isSummary`. If 0, this profile is a performance profile of the
+  application thread identified exactly by `*pIdTuple`. If 1, this profile is a
+  "summary profile" containing statistics across multiple measured application
+  threads where `*pIdTuple` lists common identifiers.
 
 Additional notes:
 
--   The array pointed to by `pProfiles` is fully contained within the Profile
-    Info section.
--   Profiles are unordered within this section, except the first which is
-    always the "canonical summary profile." This is always a summary profile and
-    contains statistics across all measured application threads.
--   `pIdTuple` points within the [Identifier Tuple section](#profledb-hierarchical-identifier-tuple-section),
-    except for the canonical summary profile where `pIdTuple` is 0.
--   The stride of `*pProfiles` is equal to `szProfile`, for forward compatibility
-    this should always be read and used as the stride when accessing `*pProfiles`.
+- The array pointed to by `pProfiles` is fully contained within the Profile
+  Info section.
+- Profiles are unordered within this section, except the first which is
+  always the "canonical summary profile." This is always a summary profile and
+  contains statistics across all measured application threads.
+- `pIdTuple` points within the [Identifier Tuple section](#profledb-hierarchical-identifier-tuple-section),
+  except for the canonical summary profile where `pIdTuple` is 0.
+- The stride of `*pProfiles` is equal to `szProfile`, for forward compatibility
+  this should always be read and used as the stride when accessing `*pProfiles`.
 
 ### Profile-Major Sparse Value Block
 
@@ -913,28 +912,28 @@ following {Idx} structure, if this {Idx} is the final element of `*pCtxIndices`
 
 Additional notes:
 
--   `pValues` and `pCtxIndices` point outside the sections listed in the
-    [`profile.db` header](#profiledb-version-40).
--   The arrays pointed to by `pValues` and `pCtxIndices` are subsequent: only
-    padding is placed between them and `pValues < pCtxIndices`. This allows
-    readers to read a plane of data in a single contiguous blob from `pValues`
-    to `pCtxIndices + nCtxs * 0xc`.
--   `metricId` is a `propMetricId` or `statMetricId` listed in the
-    [`meta.db` performance metrics section](#metadb-performance-metrics-section),
-    this is a `statMetricId` if `isSummary` is 1 and a `propMetricId` otherwise.
--   `ctxId` is a `ctxId` listed in the [`meta.db` context tree section](#metadb-context-tree-section),
-    or 0 for metric values attributed to the implicit global context.
+- `pValues` and `pCtxIndices` point outside the sections listed in the
+  [`profile.db` header](#profiledb-version-40).
+- The arrays pointed to by `pValues` and `pCtxIndices` are subsequent: only
+  padding is placed between them and `pValues < pCtxIndices`. This allows
+  readers to read a plane of data in a single contiguous blob from `pValues`
+  to `pCtxIndices + nCtxs * 0xc`.
+- `metricId` is a `propMetricId` or `statMetricId` listed in the
+  [`meta.db` performance metrics section](#metadb-performance-metrics-section),
+  this is a `statMetricId` if `isSummary` is 1 and a `propMetricId` otherwise.
+- `ctxId` is a `ctxId` listed in the [`meta.db` context tree section](#metadb-context-tree-section),
+  or 0 for metric values attributed to the implicit global context.
 
     > The values attributed to the global context are propagated from the root
     > contexts, in effect these values give an "aggregate" view of the profile
     > where the context dimension has been removed.
 
--   `*pValues` and `*pCtxIndices` are sorted by `metricId` and `ctxId`,
-    respectively. This allows the use of binary search (or some variant thereof)
-    to locate the value(s) for a particular context or metric.
--   `value` and `startIndex` are not aligned, however `metricId` and `ctxId` are.
-    This should in general not pose a significant performance penalty.
-    See [Alignment properties] above.
+- `*pValues` and `*pCtxIndices` are sorted by `metricId` and `ctxId`,
+  respectively. This allows the use of binary search (or some variant thereof)
+  to locate the value(s) for a particular context or metric.
+- `value` and `startIndex` are not aligned, however `metricId` and `ctxId` are.
+  This should in general not pose a significant performance penalty.
+  See [Alignment properties] above.
 
 ## `profile.db` Hierarchical Identifier Tuple section
 
@@ -973,26 +972,26 @@ each of the following structure:
 {Flags} above refers to an u16 bitfield with the following sub-fields (bit 0 is
 least significant):
 
--   Bit 0: `isPhysical`. If 1, the `kind` represents a physical (hardware or VM)
-    construct for which `physicalId` is the identifier (and `logicalId` is
-    arbitrary but distinct). If 0, `kind` represents a logical (software-only)
-    construct (and `physicalId` is `logicalId` zero-extended to 64 bits).
--   Bits 1-15: Reserved for future use.
+- Bit 0: `isPhysical`. If 1, the `kind` represents a physical (hardware or VM)
+  construct for which `physicalId` is the identifier (and `logicalId` is
+  arbitrary but distinct). If 0, `kind` represents a logical (software-only)
+  construct (and `physicalId` is `logicalId` zero-extended to 64 bits).
+- Bits 1-15: Reserved for future use.
 
 > The name associated with the `kind` in the [`meta.db`][INsec] indicates the
 > meaning of `logicalId` (if `isPhysical == 0`) and/or `physicalId` (if
 > `isPhysical == 1`). The following names are in current use with the given
 > meanings:
 >
-> -   "NODE": Compute node, `physicalId` indicates the hostid of the node.
-> -   "RANK": Rank of the process (from eg. MPI), `logicalId` indicates the rank.
-> -   "CORE": Core the application thread was bound to, `physicalId` indicates
->     the index of the first hardware thread as listed in /proc/cpuinfo.
-> -   "THREAD": Application CPU thread, `logicalId` indicates the index.
-> -   "GPUCONTEXT": Context used to access a GPU, `logicalId` indicates the index
->     as given by the underlying programming model (eg. CUDA context index).
-> -   "GPUSTREAM": Stream/queue used to push work to a GPU, `logicalId` indicates
->     the index as given by the programming model (eg. CUDA stream index).
+> - "NODE": Compute node, `physicalId` indicates the hostid of the node.
+> - "RANK": Rank of the process (from eg. MPI), `logicalId` indicates the rank.
+> - "CORE": Core the application thread was bound to, `physicalId` indicates
+>   the index of the first hardware thread as listed in /proc/cpuinfo.
+> - "THREAD": Application CPU thread, `logicalId` indicates the index.
+> - "GPUCONTEXT": Context used to access a GPU, `logicalId` indicates the index
+>   as given by the underlying programming model (eg. CUDA context index).
+> - "GPUSTREAM": Stream/queue used to push work to a GPU, `logicalId` indicates
+>   the index as given by the programming model (eg. CUDA stream index).
 >
 > These names/meanings are not stable and may change without a version bump, it
 > is highly recommended that readers refrain from any special-case handling of
@@ -1000,10 +999,10 @@ least significant):
 
 Additional notes:
 
--   While `physicalId` (when valid) lists a physical identification for an
-    application thread, the contained value is often too obtuse for generating
-    human-readable output listing many identifiers. `logicalId` is a suitable
-    replacement in these cases, as these values are always dense towards 0.
+- While `physicalId` (when valid) lists a physical identification for an
+  application thread, the contained value is often too obtuse for generating
+  human-readable output listing many identifiers. `logicalId` is a suitable
+  replacement in these cases, as these values are always dense towards 0.
 
 ---
 
@@ -1054,18 +1053,18 @@ The Context Info section starts with the following header:
 
 Additional notes:
 
--   The array pointed to by `pCtxs` is fully contained within the Context Info
-    section.
--   `(*pCtxs)[ctxId]` is associated with the context with the matching `ctxId`
-    as listed in the [`meta.db` context tree section](#metadb-context-tree-section).
-    `(*pCtxs)[0]` contains the metric values of the implicit global context.
+- The array pointed to by `pCtxs` is fully contained within the Context Info
+  section.
+- `(*pCtxs)[ctxId]` is associated with the context with the matching `ctxId`
+  as listed in the [`meta.db` context tree section](#metadb-context-tree-section).
+  `(*pCtxs)[0]` contains the metric values of the implicit global context.
 
     > The values attributed to the global context are propagated from the root
     > contexts, in effect these values give an "aggregate" view of the profile
     > where the context dimension has been removed.
 
--   The stride of `*pCtxs` is `szCtx`, for forward compatibility this should
-    always be read and used as the stride when accessing `*pCtxs`.
+- The stride of `*pCtxs` is `szCtx`, for forward compatibility this should
+  always be read and used as the stride when accessing `*pCtxs`.
 
 ### Context-Major Sparse Value Block
 
@@ -1112,21 +1111,21 @@ structure, if this {Idx} is the final element of `*pCtxIndices` (index
 
 Additional notes:
 
--   `pValues` and `pMetricIndices` point outside the sections listed in the
-    [`cct.db` header](#cctdb-version-40).
--   The arrays pointed to by `pValues` and `pMetricIndices` are subsequent: only
-    padding is placed between them and `pValues < pMetricIndices`. This allows
-    readers to read a plane of data in a single contiguous blob from `pValues`
-    to `pMetricIndices + nMetrics * 0xa`.
--   `metricId` is a `propMetricId` listed in the
-    [`meta.db` performance metrics section](#metadb-performance-metrics-section).
-    Unlike `profile.db`, the `cct.db` does not include any summary profiles.
--   `*pValues` and `*pMetricIndices` are sorted by `profIdx` and `metricId`,
-    respectively. This allows the use of binary search (or some variant thereof)
-    to locate the value(s) for a particular metric or application thread.
--   `value` and `startIndex` are not aligned, however `profIdx` and `metricId`
-    are. This should in general not pose a significant performance penalty.
-    See [Alignment properties] above.
+- `pValues` and `pMetricIndices` point outside the sections listed in the
+  [`cct.db` header](#cctdb-version-40).
+- The arrays pointed to by `pValues` and `pMetricIndices` are subsequent: only
+  padding is placed between them and `pValues < pMetricIndices`. This allows
+  readers to read a plane of data in a single contiguous blob from `pValues`
+  to `pMetricIndices + nMetrics * 0xa`.
+- `metricId` is a `propMetricId` listed in the
+  [`meta.db` performance metrics section](#metadb-performance-metrics-section).
+  Unlike `profile.db`, the `cct.db` does not include any summary profiles.
+- `*pValues` and `*pMetricIndices` are sorted by `profIdx` and `metricId`,
+  respectively. This allows the use of binary search (or some variant thereof)
+  to locate the value(s) for a particular metric or application thread.
+- `value` and `startIndex` are not aligned, however `profIdx` and `metricId`
+  are. This should in general not pose a significant performance penalty.
+  See [Alignment properties] above.
 
 ---
 
@@ -1181,19 +1180,19 @@ The Context Trace Headers sections starts with the following structure:
 
 Additional notes:
 
--   If `ctxId` is 0, the traced thread was not running at the `timestamp`.
-    Consecutive {Elem} elements cannot both have `ctxId` set to 0.
+- If `ctxId` is 0, the traced thread was not running at the `timestamp`.
+  Consecutive {Elem} elements cannot both have `ctxId` set to 0.
 
     > This is equivalent to attributing the trace element to the implicit global
     > context.
 
--   The array pointed to by `pTraces` is completely within the Context Trace
-    Headers section. The pointers `pStart` and `pEnd` point outside any of the
-    sections listed in the [`trace.db` header](#tracedb-version-40).
--   The array starting at `pStart` and ending just before `pEnd` is sorted in
-    order of increasing `timestamp`.
--   The stride of `*pTraces` is `szTrace`, for forward compatibility this value
-    should be read and used when accessing `*pTraces`.
--   `timestamp` is only aligned for even elements in a trace line array. Where
-    possible, readers are encouraged to prefer accessing even elements.
-    See [Alignment properties] above.
+- The array pointed to by `pTraces` is completely within the Context Trace
+  Headers section. The pointers `pStart` and `pEnd` point outside any of the
+  sections listed in the [`trace.db` header](#tracedb-version-40).
+- The array starting at `pStart` and ending just before `pEnd` is sorted in
+  order of increasing `timestamp`.
+- The stride of `*pTraces` is `szTrace`, for forward compatibility this value
+  should be read and used when accessing `*pTraces`.
+- `timestamp` is only aligned for even elements in a trace line array. Where
+  possible, readers are encouraged to prefer accessing even elements.
+  See [Alignment properties] above.
