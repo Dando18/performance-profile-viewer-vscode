@@ -568,7 +568,7 @@ function parseDotEdge(line: string): { from: string; to: string } | undefined {
 }
 
 function parseDotLabel(line: string): string | undefined {
-    const match = line.match(/\blabel="((?:\\.|[^"])*)"/);
+    const match = line.match(/\blabel="((?:\\.|[^"\\])*)"/);
     if (!match) {
         return undefined;
     }
