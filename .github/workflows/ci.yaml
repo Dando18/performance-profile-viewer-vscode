@@ -25,7 +25,7 @@ jobs:
       - name: Install Node.js Dependencies
         run: npm install
       - name: Install Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
@@ -55,7 +55,7 @@ jobs:
       - name: Install Node.js Dependencies
         run: npm install
       - name: Install Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
@@ -96,7 +96,7 @@ jobs:
       - name: Install Node.js Dependencies
         run: npm install
       - name: Install Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: 3.11
           cache: 'pip'
